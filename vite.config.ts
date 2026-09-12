@@ -18,8 +18,8 @@ export default defineConfig({
     tanstackStart({ vite: { installDevServerMiddleware: true } }),
     react(),
     ...sentryTanstackStart({
-      org: "drocsid",
-      project: "drocsid",
+      org: "kalschat",
+      project: "kalschat",
       authToken: process.env.SENTRY_AUTH_TOKEN,
       silent: !process.env.SENTRY_AUTH_TOKEN,
       sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN },

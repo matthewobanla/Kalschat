@@ -1,2 +1,7 @@
-patchedDependencies:
-  '@tanstack/start-server-core@1.169.31': patches/@tanstack__start-server-core@1.169.31.patch
+allowBuilds:
+  '@sentry/cli': true
+  core-js: true
+  esbuild: true
+# patchedDependencies:
+#   '@tanstack/start-server-core@1.169.31': patches/@tanstack__start-server-core@1.169.31.patch
+

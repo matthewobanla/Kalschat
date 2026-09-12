@@ -13,13 +13,13 @@ export function Logo({ light = false }: { light?: boolean }) {
   return (
     <Link
       to="/"
-      aria-label="Drocsid home"
+      aria-label="Kalschat home"
       data-ui={`logo ${light ? "logo-light" : ""}`}
       className="inline-flex items-center gap-2 text-[29px] leading-none font-extrabold tracking-[-1.5px] w-fit max-[580px]:text-[26px]"
     >
       <LogoMark />
       <span>
-        drocsid
+        kalschat
         <span data-ui="logo-period" className="text-orange">
           .
         </span>

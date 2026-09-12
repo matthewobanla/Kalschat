@@ -20,7 +20,7 @@ export function LegalPage({
             Home
           </Link>
           <a
-            href="https://github.com/xt42io/drocsid"
+            href="https://github.com/matthewobanla/Kalschat"
             target="_blank"
             rel="noreferrer"
             className="transition-colors hover:text-[#c84b2b]"
@@ -75,14 +75,14 @@ export function LegalPage({
           <section className="mt-14 rounded-xl border border-[#d9d9d1] bg-[#f1f1eb] px-6 py-5 max-[580px]:px-5">
             <h2 className="mt-0! text-[18px]!">Questions about this page?</h2>
             <p className="mb-0! text-[13px]!">
-              Email us at <a href="mailto:hello@drocsid.app">hello@drocsid.app</a>.
+              Email us at <a href="mailto:hello@kalschat.app">hello@kalschat.app</a>.
             </p>
           </section>
         </article>
       </main>
 
       <footer className="mx-auto flex min-h-22 w-[calc(100%-64px)] max-w-285 items-center justify-between gap-5 border-t border-line text-[10px] text-[#85887e] max-[700px]:w-[calc(100%-36px)] max-[580px]:flex-col max-[580px]:items-start max-[580px]:justify-center max-[580px]:py-6">
-        <span>© {new Date().getFullYear()} Drocsid</span>
+        <span>© {new Date().getFullYear()} Kalschat</span>
         <span>Open-source software licensed under AGPL-3.0-only</span>
       </footer>
     </div>

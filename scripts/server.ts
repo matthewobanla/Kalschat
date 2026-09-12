@@ -28,7 +28,7 @@ const close = attachRealtime(
   canonicalOrigin,
 );
 server.listen(Number(process.env.PORT || 1515), "0.0.0.0", () =>
-  console.log(`Drocsid listening on port ${process.env.PORT || 1515}`),
+  console.log(`Kalschat listening on port ${process.env.PORT || 1515}`),
 );
 for (const signal of ["SIGINT", "SIGTERM"] as const)
   process.once(signal, () => {

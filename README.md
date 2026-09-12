@@ -1,4 +1,4 @@
-# Drocsid
+# Kalschat
 
 An open-source community chat app built with TanStack Start, React, Tailwind, Hugeicons, PostgreSQL, Drizzle, Better Auth, and Byteship.
 

@@ -149,7 +149,7 @@ export function AppShell() {
               data-ui="a-mobile-brand"
               className="max-[760px]:flex max-[760px]:items-center max-[760px]:gap-1.5 max-[760px]:text-[20px] max-[760px]:font-[750] max-[760px]:tracking-[-1px] max-[760px]:**:data-[ui~=logo-mark]:text-(--a-green) max-[760px]:**:data-[ui~=logo-mark]:size-5.75"
             >
-              <LogoMark /> drocsid.
+              <LogoMark /> Kalschat.
             </Link>
             <Link to="/app/search" search={{ q: "" }} aria-label="Search">
               <AppIcon name="search" />

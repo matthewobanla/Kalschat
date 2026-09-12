@@ -3,7 +3,7 @@ import { LogoMark } from "../ui";
 import { AppIcon } from "./primitives";
 import { workspaceTheme } from "./workspace-theme";
 
-export const workspaceThemeKey = "drocsid:workspace-theme";
+export const workspaceThemeKey = "kalschat:workspace-theme";
 
 function Skeleton({ className = "" }: { className?: string }) {
   return (
@@ -108,7 +108,7 @@ export function AppLoading({
               )}
             </div>
             <span className="mb-5 text-2xl font-bold tracking-tight">
-              drocsid<span className="text-(--a-orange)">.</span>
+              kalschat<span className="text-(--a-orange)">.</span>
             </span>
             {error ? (
               <div role="alert" className="w-full">

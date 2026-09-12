@@ -2,15 +2,15 @@ services:
   postgres:
     image: postgres:17-alpine
     environment:
-      POSTGRES_USER: drocsid
-      POSTGRES_PASSWORD: drocsid
-      POSTGRES_DB: drocsid
+      POSTGRES_USER: kalschat
+      POSTGRES_PASSWORD: kalschat
+      POSTGRES_DB: kalschat
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U drocsid -d drocsid"]
+      test: ["CMD-SHELL", "pg_isready -U kalschat -d kalschat"]
       interval: 5s
       timeout: 5s
       retries: 10

@@ -1,4 +1,4 @@
-const recoveryKey = "drocsid:chunk-recovery";
+const recoveryKey = "kalschat:chunk-recovery";
 const recoveryCooldown = 60_000;
 
 export function isChunkLoadError(error: unknown) {

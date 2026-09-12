@@ -1,17 +1,17 @@
-# Contributing to Drocsid
+# Contributing to Kalschat
 
-Thank you for helping make Drocsid better. Contributions can include bug reports, design feedback, documentation, tests, accessibility improvements, and code.
+Thank you for helping make Kalschat better. Contributions can include bug reports, design feedback, documentation, tests, accessibility improvements, and code.
 
 ## Before you begin
 
-- Search the existing [issues](https://github.com/xt42io/drocsid/issues) and pull requests before opening a duplicate.
+- Search the existing [issues](https://github.com/matthewobanla/Kalschat/issues) and pull requests before opening a duplicate.
 - Open an issue before investing in a large feature, schema change, new dependency, or major interface redesign so the approach can be discussed.
-- Keep security vulnerabilities private. Email `hello@drocsid.app` with reproduction details instead of opening a public issue.
+- Keep security vulnerabilities private. Email `hello@kalschat.app` with reproduction details instead of opening a public issue.
 - Follow the [Code of Conduct](CODE_OF_CONDUCT.md) in project spaces.
 
 ## Local setup
 
-Drocsid requires Node.js 22.12 or newer, pnpm, and PostgreSQL.
+Kalschat requires Node.js 22.12 or newer, pnpm, and PostgreSQL.
 
 1. Fork and clone the repository.
 2. Run `pnpm install`.
