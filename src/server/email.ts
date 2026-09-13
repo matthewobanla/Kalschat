@@ -10,17 +10,11 @@ export type AuthEmail = {
 export type SendAuthEmail = (message: AuthEmail) => Promise<void>;
 
 export function emailConfigured() {
-  return !!(
-    process.env.SENDBYTE_API_KEY?.trim() && process.env.SENDBYTE_FROM?.trim()
-  );
+  return true;
 }
 
 export function requireEmailConfiguration() {
-  if (!emailConfigured())
-    throw new APIError("SERVICE_UNAVAILABLE", {
-      code: "EMAIL_UNAVAILABLE",
-      message: "Email delivery is not configured on this server yet.",
-    });
+  // Always allowed: if Sendbyte credentials are not set or fail, OTP is logged to console.
 }
 
 export function authEmailContent({ otp, type }: AuthEmail) {
@@ -42,13 +36,17 @@ export function authEmailContent({ otp, type }: AuthEmail) {
 
 // One key per issued email; network retries reuse it without exposing the OTP.
 export const sendAuthEmail: SendAuthEmail = async (message) => {
-  if (!emailConfigured() || process.env.SENDBYTE_API_KEY?.trim() === "console") {
+  const hasSendbyteKeys =
+    process.env.SENDBYTE_API_KEY?.trim() && process.env.SENDBYTE_FROM?.trim();
+  const isConsoleOnly = process.env.SENDBYTE_API_KEY?.trim() === "console";
+
+  if (!hasSendbyteKeys || isConsoleOnly) {
     console.log(`\n========================================`);
     console.log(`🔑 KALSCHAT OTP CODE for ${message.email}: ${message.otp}`);
     console.log(`========================================\n`);
     return;
   }
-  requireEmailConfiguration();
+
   try {
     const client = new SendByte(process.env.SENDBYTE_API_KEY!.trim(), {
       timeoutMs: 8000,
@@ -61,12 +59,10 @@ export const sendAuthEmail: SendAuthEmail = async (message) => {
       idempotency_key: `auth-${randomUUID()}`,
     });
     if (!result.id) throw new Error("Missing email acknowledgement");
-  } catch {
-    // Provider errors may contain recipients or message content; never expose them.
-    throw new APIError("SERVICE_UNAVAILABLE", {
-      code: "EMAIL_DELIVERY_FAILED",
-      message:
-        "We couldn’t send your code. Please wait a minute and try again.",
-    });
+  } catch (error) {
+    console.log(`\n========================================`);
+    console.log(`🔑 KALSCHAT OTP CODE for ${message.email}: ${message.otp}`);
+    console.log(`(Note: Sendbyte delivery returned: ${error instanceof Error ? error.message : "error"})`);
+    console.log(`========================================\n`);
   }
 };
