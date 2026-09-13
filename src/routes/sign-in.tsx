@@ -6,6 +6,6 @@ export const Route = createFileRoute("/sign-in")({
   beforeLoad: async () => {
     if (await hasAuthenticatedViewer()) throw redirect({ to: "/app" });
   },
-  head: () => ({ meta: [{ title: "Welcome back — Drocsid" }] }),
+  head: () => ({ meta: [{ title: "Welcome back — Kalschat" }] }),
   component: () => <AuthScreen mode="sign-in" />,
 });
