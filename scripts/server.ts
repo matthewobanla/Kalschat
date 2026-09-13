@@ -2,14 +2,15 @@ import { createAppServer } from "../src/server/node-server";
 import { attachRealtime } from "../src/server/realtime/gateway";
 import { realtimeData } from "../src/server/realtime/data";
 import { postgresBus } from "../src/server/realtime/bus";
-import { getDb } from "../src/server/db";
+import { getDb, getDatabaseUrl } from "../src/server/db";
 import { inviteExists, inviteShortOrigin } from "../src/server/invites";
 
 import { resolve } from "node:path";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { sql } from "drizzle-orm";
 
-if (process.env.DATABASE_URL) {
+const dbConnectionString = getDatabaseUrl();
+if (dbConnectionString) {
   try {
     console.log("Checking and applying database migrations...");
     await migrate(getDb(), {

@@ -1,5 +1,6 @@
 import { Client } from "pg";
 import type { Presence } from "../../types/app.ts";
+import { getDatabaseUrl } from "../db/index.ts";
 
 export type BusEvent =
   | {
@@ -61,9 +62,10 @@ export function postgresBus(): LiveBus {
   }
   function connect() {
     if (stopped) return;
+    const dbUrl = process.env.DATABASE_LISTEN_URL || getDatabaseUrl();
+    if (!dbUrl) return;
     const connection = new Client({
-      connectionString:
-        process.env.DATABASE_LISTEN_URL || process.env.DATABASE_URL,
+      connectionString: dbUrl,
       connectionTimeoutMillis: 10000,
       keepAlive: true,
     });
