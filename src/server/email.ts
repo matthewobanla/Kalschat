@@ -32,16 +32,22 @@ export function authEmailContent({ otp, type }: AuthEmail) {
     });
   const title = "Your sign-in code";
   const explanation =
-    "Enter this code in Drocsid to continue. If you’re new, this will verify your email and create your account.";
+    "Enter this code in Kalschat to continue. If you’re new, this will verify your email and create your account.";
   return {
-    subject: `${title} — Drocsid`,
+    subject: `${title} — Kalschat`,
     text: `${title}\n\n${explanation}\n\n${otp}\n\nThis code expires in 5 minutes and can only be used once. Never share it. If you did not request it, you can ignore this email.`,
-    html: `<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0;padding:32px 16px;background:#171717;font-family:Arial,sans-serif;color:#f5f5f5"><table role="presentation" style="max-width:480px;width:100%;margin:auto;border:1px solid #353535;border-radius:20px;background:#202020"><tr><td style="padding:36px"><div style="font-size:25px;font-weight:700">drocsid<span style="color:#ff643e">.</span></div><h1 style="font-size:26px;margin:32px 0 16px">${title}</h1><p style="color:#bdbdbd;line-height:1.6">${explanation}</p><div style="margin:28px 0;padding:22px 12px;border-radius:12px;background:#2b2b2b;text-align:center;font-size:36px;font-family:monospace;letter-spacing:8px;color:#ff8b69">${otp}</div><p style="color:#bdbdbd;font-size:14px;line-height:1.6">This code expires in <strong>5 minutes</strong> and can only be used once. Never share it.</p><p style="margin-top:28px;color:#999;font-size:12px;line-height:1.6">If you did not request this code, you can ignore this email.</p></td></tr></table></body></html>`,
+    html: `<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0;padding:32px 16px;background:#171717;font-family:Arial,sans-serif;color:#f5f5f5"><table role="presentation" style="max-width:480px;width:100%;margin:auto;border:1px solid #353535;border-radius:20px;background:#202020"><tr><td style="padding:36px"><div style="font-size:25px;font-weight:700">kalschat<span style="color:#ff643e">.</span></div><h1 style="font-size:26px;margin:32px 0 16px">${title}</h1><p style="color:#bdbdbd;line-height:1.6">${explanation}</p><div style="margin:28px 0;padding:22px 12px;border-radius:12px;background:#2b2b2b;text-align:center;font-size:36px;font-family:monospace;letter-spacing:8px;color:#ff8b69">${otp}</div><p style="color:#bdbdbd;font-size:14px;line-height:1.6">This code expires in <strong>5 minutes</strong> and can only be used once. Never share it.</p><p style="margin-top:28px;color:#999;font-size:12px;line-height:1.6">If you did not request this code, you can ignore this email.</p></td></tr></table></body></html>`,
   };
 }
 
 // One key per issued email; network retries reuse it without exposing the OTP.
 export const sendAuthEmail: SendAuthEmail = async (message) => {
+  if (!emailConfigured() || process.env.SENDBYTE_API_KEY?.trim() === "console") {
+    console.log(`\n========================================`);
+    console.log(`🔑 KALSCHAT OTP CODE for ${message.email}: ${message.otp}`);
+    console.log(`========================================\n`);
+    return;
+  }
   requireEmailConfiguration();
   try {
     const client = new SendByte(process.env.SENDBYTE_API_KEY!.trim(), {
