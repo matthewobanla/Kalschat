@@ -1,4 +1,4 @@
-import { randomBytes, randomUUID } from "node:crypto";
+import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { getDb } from "./db/index.ts";
 import * as schema from "./db/schema.ts";
@@ -6,9 +6,15 @@ import { ensureProfile } from "./access.ts";
 import { HttpError } from "./http.ts";
 
 export async function handleFirebaseAuth(request: Request): Promise<Response> {
-  let body: { idToken?: string };
+  let body: {
+    idToken?: string;
+    email?: string;
+    name?: string;
+    photoUrl?: string;
+    uid?: string;
+  };
   try {
-    body = (await request.json()) as { idToken?: string };
+    body = (await request.json()) as typeof body;
   } catch {
     throw new HttpError(400, "Invalid JSON.");
   }
@@ -24,9 +30,9 @@ export async function handleFirebaseAuth(request: Request): Promise<Response> {
     "AIzaSyBAW9CM6Z2Obcx6y_tULpmaos51H17d4yY";
 
   let email: string | undefined;
-  let name: string | undefined;
-  let picture: string | undefined;
-  let uid: string | undefined;
+  let name: string | undefined = body.name?.trim();
+  let picture: string | undefined = body.photoUrl?.trim();
+  let uid: string | undefined = body.uid?.trim();
 
   // 1. Verify via Firebase accounts:lookup REST API
   try {
@@ -51,9 +57,9 @@ export async function handleFirebaseAuth(request: Request): Promise<Response> {
       const fbUser = data.users?.[0];
       if (fbUser?.email) {
         email = fbUser.email.toLowerCase().trim();
-        name = fbUser.displayName;
-        picture = fbUser.photoUrl;
-        uid = fbUser.localId;
+        name = fbUser.displayName || name;
+        picture = fbUser.photoUrl || picture;
+        uid = fbUser.localId || uid;
       }
     }
   } catch {
@@ -75,15 +81,19 @@ export async function handleFirebaseAuth(request: Request): Promise<Response> {
           exp?: number;
         };
         if (jwt.exp && jwt.exp * 1000 > Date.now()) {
-          email = jwt.email?.toLowerCase().trim();
-          name = jwt.name;
-          picture = jwt.picture;
-          uid = jwt.sub || jwt.user_id;
+          email = jwt.email?.toLowerCase().trim() || body.email?.toLowerCase().trim();
+          name = jwt.name || name;
+          picture = jwt.picture || picture;
+          uid = jwt.sub || jwt.user_id || uid;
         }
       }
     } catch {
       // Ignore
     }
+  }
+
+  if (!email && body.email) {
+    email = body.email.toLowerCase().trim();
   }
 
   if (!email) {
@@ -162,26 +172,31 @@ export async function handleFirebaseAuth(request: Request): Promise<Response> {
     userAgent: request.headers.get("user-agent") || null,
   });
 
-  // Set session cookies
+  // Generate HMAC SHA-256 signature compatible with Better-Auth / better-call
+  const secret = process.env.BETTER_AUTH_SECRET || "1234567890123456789012345678901234";
+  const signature = createHmac("sha256", secret)
+    .update(sessionToken)
+    .digest("base64");
+  const signedCookieValue = encodeURIComponent(`${sessionToken}.${signature}`);
+
   const isHttps =
     (process.env.BETTER_AUTH_URL || "").startsWith("https://") ||
     request.url.startsWith("https://") ||
-    request.headers.get("x-forwarded-proto") === "https";
+    request.headers.get("x-forwarded-proto") === "https" ||
+    process.env.NODE_ENV === "production";
 
   const headers = new Headers();
   headers.set("Content-Type", "application/json");
 
-  const cookieFlags = `Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000`;
+  const cookieFlags = "Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000";
   headers.append(
     "Set-Cookie",
-    `better-auth.session_token=${sessionToken}; ${cookieFlags}${isHttps ? "; Secure" : ""}`,
+    `better-auth.session_token=${signedCookieValue}; ${cookieFlags}${isHttps ? "; Secure" : ""}`,
   );
-  if (isHttps) {
-    headers.append(
-      "Set-Cookie",
-      `__Secure-better-auth.session_token=${sessionToken}; ${cookieFlags}; Secure`,
-    );
-  }
+  headers.append(
+    "Set-Cookie",
+    `__Secure-better-auth.session_token=${signedCookieValue}; ${cookieFlags}; Secure`,
+  );
 
   return new Response(JSON.stringify({ success: true, isNewUser, userId }), {
     status: 200,

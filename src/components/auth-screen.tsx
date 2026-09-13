@@ -139,7 +139,13 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
         const response = await fetch("/api/auth/firebase", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ idToken }),
+          body: JSON.stringify({
+            idToken,
+            email: userCredential.user.email,
+            name: userCredential.user.displayName,
+            photoUrl: userCredential.user.photoURL,
+            uid: userCredential.user.uid,
+          }),
         });
 
         if (!response.ok) {
