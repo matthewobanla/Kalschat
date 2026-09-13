@@ -70,7 +70,7 @@ export async function endpoint(run: () => Promise<Response>) {
       return json({ error: "That name or record already exists." }, 409);
     // Never return database errors, SQL parameters, credentials, or provider internals.
     console.error(
-      "[Drocsid API] request failed",
+      "[Kalschat API] request failed",
       error instanceof Error ? error.name : "Unknown error",
     );
     return json(

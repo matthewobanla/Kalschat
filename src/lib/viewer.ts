@@ -13,7 +13,7 @@ export const hasAuthenticatedViewer = createServerFn({ method: "GET" }).handler(
       return Boolean(session?.user.emailVerified);
     } catch (error) {
       console.error(
-        "[Drocsid auth] could not resolve the public session",
+        "[Kalschat auth] could not resolve the public session",
         error instanceof Error ? error.name : "Unknown error",
       );
       return false;
