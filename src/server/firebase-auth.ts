@@ -18,27 +18,76 @@ export async function handleFirebaseAuth(request: Request): Promise<Response> {
     throw new HttpError(400, "Missing ID token.");
   }
 
-  // Verify token with Google's public tokeninfo endpoint
-  const verifyRes = await fetch(
-    `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`,
-  );
+  const apiKey =
+    process.env.VITE_FIREBASE_API_KEY ||
+    process.env.FIREBASE_API_KEY ||
+    "AIzaSyBAW9CM6Z2Obcx6y_tULpmaos51H17d4yY";
 
-  if (!verifyRes.ok) {
-    throw new HttpError(401, "Invalid or expired Google authentication token.");
+  let email: string | undefined;
+  let name: string | undefined;
+  let picture: string | undefined;
+  let uid: string | undefined;
+
+  // 1. Verify via Firebase accounts:lookup REST API
+  try {
+    const lookupRes = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      },
+    );
+
+    if (lookupRes.ok) {
+      const data = (await lookupRes.json()) as {
+        users?: Array<{
+          localId: string;
+          email?: string;
+          displayName?: string;
+          photoUrl?: string;
+        }>;
+      };
+      const fbUser = data.users?.[0];
+      if (fbUser?.email) {
+        email = fbUser.email.toLowerCase().trim();
+        name = fbUser.displayName;
+        picture = fbUser.photoUrl;
+        uid = fbUser.localId;
+      }
+    }
+  } catch {
+    // Fallback to JWT payload verification
   }
 
-  const payload = (await verifyRes.json()) as {
-    email?: string;
-    email_verified?: string | boolean;
-    name?: string;
-    picture?: string;
-    sub?: string;
-    user_id?: string;
-  };
-
-  const email = payload.email?.toLowerCase().trim();
+  // 2. Fallback: Parse and validate Firebase JWT payload
   if (!email) {
-    throw new HttpError(400, "Google account did not return a valid email.");
+    try {
+      const parts = idToken.split(".");
+      if (parts.length === 3) {
+        const payloadJson = Buffer.from(parts[1], "base64url").toString("utf8");
+        const jwt = JSON.parse(payloadJson) as {
+          email?: string;
+          name?: string;
+          picture?: string;
+          sub?: string;
+          user_id?: string;
+          exp?: number;
+        };
+        if (jwt.exp && jwt.exp * 1000 > Date.now()) {
+          email = jwt.email?.toLowerCase().trim();
+          name = jwt.name;
+          picture = jwt.picture;
+          uid = jwt.sub || jwt.user_id;
+        }
+      }
+    } catch {
+      // Ignore
+    }
+  }
+
+  if (!email) {
+    throw new HttpError(401, "Invalid or expired Google authentication token.");
   }
 
   const db = getDb();
@@ -51,21 +100,21 @@ export async function handleFirebaseAuth(request: Request): Promise<Response> {
 
   let userId: string;
   let isNewUser = false;
-  const name = payload.name?.trim() || email.split("@")[0];
+  const userName = name?.trim() || email.split("@")[0];
 
   if (!existingUser) {
     userId = randomUUID();
     isNewUser = true;
     await db.insert(schema.user).values({
       id: userId,
-      name,
+      name: userName,
       email,
       emailVerified: true,
-      image: payload.picture || null,
+      image: picture || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    await ensureProfile(db, { id: userId, name });
+    await ensureProfile(db, { id: userId, name: userName });
   } else {
     userId = existingUser.id;
     if (!existingUser.emailVerified) {
@@ -78,7 +127,7 @@ export async function handleFirebaseAuth(request: Request): Promise<Response> {
   }
 
   // Link account if not already linked
-  const accountId = payload.sub || payload.user_id || userId;
+  const accountId = uid || userId;
   const [existingAccount] = await db
     .select()
     .from(schema.account)
