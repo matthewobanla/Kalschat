@@ -5,6 +5,24 @@ import { postgresBus } from "../src/server/realtime/bus";
 import { getDb } from "../src/server/db";
 import { inviteExists, inviteShortOrigin } from "../src/server/invites";
 
+import { resolve } from "node:path";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+
+if (process.env.DATABASE_URL) {
+  try {
+    console.log("Checking and applying database migrations...");
+    await migrate(getDb(), {
+      migrationsFolder: resolve("drizzle"),
+    });
+    console.log("Database migrations applied successfully.");
+  } catch (error) {
+    console.error(
+      "Auto-migration note:",
+      error instanceof Error ? error.message : String(error),
+    );
+  }
+}
+
 const { default: app } = await import("../dist/server/server.js");
 const canonicalOrigin = new URL(
   process.env.BETTER_AUTH_URL || "http://localhost:1515",

@@ -173,7 +173,10 @@ export async function handleFirebaseAuth(request: Request): Promise<Response> {
   });
 
   // Generate HMAC SHA-256 signature compatible with Better-Auth / better-call
-  const secret = process.env.BETTER_AUTH_SECRET || "1234567890123456789012345678901234";
+  const secret =
+    process.env.BETTER_AUTH_SECRET && process.env.BETTER_AUTH_SECRET.length >= 32
+      ? process.env.BETTER_AUTH_SECRET
+      : "kalschat_default_secret_key_change_in_production_32chars_min";
   const signature = createHmac("sha256", secret)
     .update(sessionToken)
     .digest("base64");
