@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/tanstackstart-react";
-import { createRouter } from "@tanstack/react-router";
+import { createRouter, type ErrorComponentProps } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { useEffect } from "react";
 import {
@@ -7,9 +7,9 @@ import {
   reloadAfterChunkFailure,
 } from "./lib/chunk-recovery";
 
-function RouterError({ error }: { error: Error }) {
+function RouterError({ error }: ErrorComponentProps) {
   useEffect(() => {
-    if (isChunkLoadError(error)) reloadAfterChunkFailure();
+    if (error instanceof Error && isChunkLoadError(error)) reloadAfterChunkFailure();
   }, [error]);
   return (
     <main
