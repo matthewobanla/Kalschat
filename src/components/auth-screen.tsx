@@ -15,7 +15,7 @@ import { ButtonLoader } from "./button-loader";
 import { formatPageTitle } from "../lib/page-title";
 
 type AuthMode = "sign-in" | "sign-up";
-type SocialProvider = "discord" | "github";
+type SocialProvider = "google" | "discord" | "github";
 type Errors = Partial<Record<"email", string>>;
 const copy = {
   "sign-in": {
@@ -260,6 +260,27 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
                   <div className="flex flex-col gap-2.5">
                     <button
                       type="button"
+                      data-ui="social-button google"
+                      className="flex min-h-12 w-full items-center justify-center gap-2 rounded-md border border-solid border-[#d9dbcf] bg-white text-[14px] font-semibold text-[#3c4043] transition-[background,border-color,box-shadow] hover:border-[#b7c0a7] hover:bg-[#f8f9fa] shadow-[0_1px_2px_rgba(0,0,0,0.05)] max-[580px]:min-h-12 max-[580px]:text-[13px]"
+                      disabled={busy}
+                      onClick={() => void signInWith("google")}
+                    >
+                      {busyAction === "google" ? (
+                        <ButtonLoader label="Connecting to Google" />
+                      ) : (
+                        <>
+                          <img
+                            src="/icons/google.svg"
+                            alt=""
+                            aria-hidden="true"
+                            className="size-5"
+                          />
+                          Continue with Google
+                        </>
+                      )}
+                    </button>
+                    <button
+                      type="button"
                       data-ui="social-button discord"
                       className="flex min-h-12 w-full items-center justify-center gap-2 rounded-md border border-solid border-[#5865f2] bg-[#5865f2] text-[14px] font-semibold text-white transition-[background,border-color] hover:border-[#4f5bd5] hover:bg-[#4f5bd5] max-[580px]:min-h-12 max-[580px]:text-[13px]"
                       disabled={busy}
@@ -308,7 +329,11 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
                       role="status"
                     >
                       <Icon icon={AlertCircleIcon} size={17} />
-                      {socialNotice === "discord" ? "Discord" : "GitHub"}
+                      {socialNotice === "google"
+                        ? "Google"
+                        : socialNotice === "discord"
+                          ? "Discord"
+                          : "GitHub"}
                       {" sign-in is not configured on this server yet."}
                     </p>
                   )}
