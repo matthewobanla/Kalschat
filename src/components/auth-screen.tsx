@@ -12,6 +12,8 @@ import { Avatar, Icon, Logo } from "./ui";
 import { authClient } from "../lib/auth-client";
 import { EmailCodeForm, requestEmailCode } from "./email-code-form";
 import { ButtonLoader } from "./button-loader";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { firebaseAuth } from "../lib/firebase";
 import { formatPageTitle } from "../lib/page-title";
 
 type AuthMode = "sign-in" | "sign-up";
@@ -124,7 +126,62 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
     if (busy) return;
     setBusyAction(provider);
     setSocialNotice(null);
+    setServerError("");
     posthog.capture(`${provider}_sign_in_clicked`, { mode });
+
+    if (provider === "google") {
+      try {
+        const googleProvider = new GoogleAuthProvider();
+        googleProvider.setCustomParameters({ prompt: "select_account" });
+        const userCredential = await signInWithPopup(firebaseAuth, googleProvider);
+        const idToken = await userCredential.user.getIdToken();
+
+        const response = await fetch("/api/auth/firebase", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken }),
+        });
+
+        if (!response.ok) {
+          const err = (await response.json().catch(() => ({}))) as {
+            error?: string;
+          };
+          setServerError(
+            err.error || "Google authentication failed. Please try again.",
+          );
+          return;
+        }
+
+        const data = (await response.json()) as { isNewUser?: boolean };
+        if (data.isNewUser || signup) {
+          window.location.assign("/app/welcome");
+        } else {
+          window.location.assign(authDestination());
+        }
+      } catch (error: unknown) {
+        const err = error as { code?: string; message?: string };
+        if (
+          err?.code === "auth/popup-closed-by-user" ||
+          err?.code === "auth/cancelled-popup-request"
+        ) {
+          return;
+        }
+        if (
+          err?.code === "auth/configuration-not-found" ||
+          err?.code === "auth/operation-not-allowed"
+        ) {
+          setSocialNotice("google");
+          return;
+        }
+        setServerError(
+          err?.message || "Could not sign in with Google. Please try again.",
+        );
+      } finally {
+        setBusyAction(null);
+      }
+      return;
+    }
+
     try {
       const result = await authClient.signIn.social({
         provider,
