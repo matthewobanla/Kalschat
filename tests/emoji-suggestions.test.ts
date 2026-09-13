@@ -15,7 +15,7 @@ test("emoji query finds a colon shortcode at the caret", () => {
 
 test("emoji query ignores times, URLs and inline code", () => {
   assert.equal(emojiAtCaret("meet at 12:30", 13), null);
-  assert.equal(emojiAtCaret("https://drocsid.app:lol", 23), null);
+  assert.equal(emojiAtCaret("https://kalschat.app:lol", 23), null);
   assert.equal(emojiAtCaret("`:lol`", 5), null);
 });
 

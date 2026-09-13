@@ -40,7 +40,7 @@ function decode(value: string) {
 export function formatPageTitle(label: string, unread = 0) {
   const count = Math.max(0, Math.floor(unread));
   const badge = count ? `(${count > 99 ? "99+" : count}) ` : "";
-  return `${badge}${clean(label, "Home")} — Drocsid`;
+  return `${badge}${clean(label, "Home")} — Kalschat`;
 }
 
 export function unreadMessageCount(state: TitleState) {

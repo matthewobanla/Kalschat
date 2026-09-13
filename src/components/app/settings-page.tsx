@@ -71,7 +71,7 @@ export function SettingsPage({ section }: { section: string }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "drocsid-loaded-data.json";
+    link.download = "kalschat-loaded-data.json";
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     notify("Your export is ready.");

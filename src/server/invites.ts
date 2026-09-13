@@ -23,7 +23,7 @@ function randomInviteCode(length = 7) {
 }
 
 export function inviteShortOrigin() {
-  const configured = process.env.INVITE_SHORT_URL || "https://drocsid.cc";
+  const configured = process.env.INVITE_SHORT_URL || "https://kalschat.cc";
   const url = new URL(configured);
   if (url.pathname !== "/" || url.search || url.hash)
     throw new Error("INVITE_SHORT_URL must contain only an origin.");

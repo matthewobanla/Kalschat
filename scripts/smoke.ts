@@ -62,7 +62,7 @@ try {
     },
   ]);
   const file = new TextEncoder().encode(
-    "Drocsid private upload verification. This file is deleted after testing.",
+    "Kalschat private upload verification. This file is deleted after testing.",
   );
   const upload = await data("/api/uploads", {
     type: "prepare",

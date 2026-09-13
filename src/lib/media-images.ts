@@ -17,7 +17,7 @@ export function mediaImageUrl(src: string, variant: ImageVariant) {
       ? "community-icons"
       : "attachments";
   if (!new RegExp(`^/api/${kind}/[^/]+$`).test(path)) return src;
-  const url = new URL(src, "http://drocsid.local");
+  const url = new URL(src, "http://kalschat.local");
   url.searchParams.set("variant", variant);
   return `${url.pathname}${url.search}${url.hash}`;
 }

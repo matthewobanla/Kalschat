@@ -8,7 +8,7 @@ import { request as httpRequest } from "node:http";
 import { createAppServer } from "../src/server/node-server";
 
 test("production Node runner serves assets and forwards authenticated Fetch requests", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "drocsid-assets-"));
+  const directory = await mkdtemp(join(tmpdir(), "kalschat-assets-"));
   await writeFile(join(directory, "app.css"), "body{color:black}");
   const server = createAppServer(async (request) => {
     if (new URL(request.url).pathname === "/api/check")
@@ -18,7 +18,7 @@ test("production Node runner serves assets and forwards authenticated Fetch requ
         body: await request.text(),
       });
     if (new URL(request.url).pathname === "/page")
-      return new Response("<h1>Drocsid</h1>", {
+      return new Response("<h1>Kalschat</h1>", {
         headers: {
           "Content-Type": "text/html; charset=utf-8",
           "Cache-Control": "public, max-age=3600",
@@ -46,7 +46,7 @@ test("production Node runner serves assets and forwards authenticated Fetch requ
     });
     const page = await fetch(`${base}/page`);
     assert.equal(page.headers.get("cache-control"), "no-cache");
-    assert.equal(await page.text(), "<h1>Drocsid</h1>");
+    assert.equal(await page.text(), "<h1>Kalschat</h1>");
     assert.equal((await fetch(`${base}/.env`)).status, 404);
     assert.equal((await fetch(`${base}/missing`)).status, 404);
   } finally {
@@ -56,15 +56,15 @@ test("production Node runner serves assets and forwards authenticated Fetch requ
 });
 
 test("short invite host exposes only valid invite redirects", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "drocsid-short-invites-"));
+  const directory = await mkdtemp(join(tmpdir(), "kalschat-short-invites-"));
   await writeFile(join(directory, "app.css"), "private app asset");
   const seen: string[] = [];
   const server = createAppServer(
     async () => new Response("full application"),
     directory,
     {
-      origin: "https://drocsid.cc",
-      canonicalOrigin: "https://drocsid.app",
+      origin: "https://kalschat.cc",
+      canonicalOrigin: "https://kalschat.app",
       resolve: async (code) => {
         seen.push(code);
         return code === "Good123" || code === "6F_70I_yzEwM";
@@ -77,7 +77,7 @@ test("short invite host exposes only valid invite redirects", async () => {
   const request = (
     path: string,
     method = "GET",
-    host = "drocsid.cc",
+    host = "kalschat.cc",
   ) =>
     new Promise<{
       status: number;
@@ -110,26 +110,26 @@ test("short invite host exposes only valid invite redirects", async () => {
     assert.equal(invite.status, 302);
     assert.equal(
       invite.headers.location,
-      "https://drocsid.app/invite/Good123",
+      "https://kalschat.app/invite/Good123",
     );
     assert.equal((await request("/Miss123")).status, 404);
     const legacyInvite = await request("/6F_70I_yzEwM");
     assert.equal(legacyInvite.status, 302);
     assert.equal(
       legacyInvite.headers.location,
-      "https://drocsid.app/invite/6F_70I_yzEwM",
+      "https://kalschat.app/invite/6F_70I_yzEwM",
     );
     assert.equal((await request("/Bad_123")).status, 404);
     assert.equal((await request("/Bad-123")).status, 404);
     assert.equal((await request("/app")).status, 404);
     assert.equal((await request("/api/session")).status, 404);
     assert.equal((await request("/app.css")).status, 404);
-    assert.equal((await request("/app", "GET", "drocsid.cc:443")).status, 404);
-    assert.equal((await request("/app", "GET", "drocsid.cc.")).status, 404);
+    assert.equal((await request("/app", "GET", "kalschat.cc:443")).status, 404);
+    assert.equal((await request("/app", "GET", "kalschat.cc.")).status, 404);
     assert.equal((await request("/Good123", "POST")).status, 405);
     assert.deepEqual(seen, ["Good123", "Miss123", "6F_70I_yzEwM"]);
 
-    const application = await request("/app.css", "GET", "drocsid.app");
+    const application = await request("/app.css", "GET", "kalschat.app");
     assert.equal(application.status, 200);
     assert.equal(application.body, "private app asset");
   } finally {

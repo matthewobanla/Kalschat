@@ -22,7 +22,7 @@ export function requireOrigin(request: Request) {
     process.env.BETTER_AUTH_URL || "http://localhost:1515",
   ).origin;
   if (origin !== expected)
-    throw new HttpError(403, "This request must come from Drocsid.");
+    throw new HttpError(403, "This request must come from Kalschat.");
 }
 export async function readJson(request: Request, maxBytes = 128_000) {
   if (!request.headers.get("content-type")?.startsWith("application/json"))

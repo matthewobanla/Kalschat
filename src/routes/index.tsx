@@ -14,8 +14,8 @@ import { hasAuthenticatedViewer } from "../lib/viewer";
 export const Route = createFileRoute("/")({
   loader: () => hasAuthenticatedViewer(),
   head: () => ({
-    links: [{ rel: "canonical", href: "https://drocsid.app/" }],
-    meta: [{ property: "og:url", content: "https://drocsid.app/" }],
+    links: [{ rel: "canonical", href: "https://kalschat.app/" }],
+    meta: [{ property: "og:url", content: "https://kalschat.app/" }],
   }),
   component: LandingPage,
 });
@@ -134,7 +134,7 @@ function LandingPage() {
               data-ui="button button-dark button-small"
               className="inline-flex min-h-10.5 items-center justify-center gap-3 whitespace-nowrap rounded-[7px] border border-transparent bg-ink px-4 py-2.5 text-[13px] font-semibold text-white transition-[background,transform,box-shadow] hover:-translate-y-0.5 hover:bg-[#42433d] active:translate-y-0 motion-reduce:hover:translate-y-0"
             >
-              Open Drocsid <Icon icon={ArrowUpRight01Icon} size={17} />
+              Open Kalschat <Icon icon={ArrowUpRight01Icon} size={17} />
             </Link>
           ) : (
             <>
@@ -150,7 +150,7 @@ function LandingPage() {
                 data-ui="button button-dark button-small"
                 className="inline-flex min-h-10.5 items-center justify-center gap-3 whitespace-nowrap rounded-[7px] border border-transparent bg-ink px-4 py-2.5 text-[13px] font-semibold text-white transition-[background,transform,box-shadow] hover:-translate-y-0.5 hover:bg-[#42433d] active:translate-y-0 motion-reduce:hover:translate-y-0"
               >
-                Join Drocsid <Icon icon={ArrowUpRight01Icon} size={17} />
+                Join Kalschat <Icon icon={ArrowUpRight01Icon} size={17} />
               </Link>
             </>
           )}
@@ -224,11 +224,11 @@ function LandingPage() {
               data-ui="button button-orange"
               className="inline-flex min-h-13 items-center justify-center gap-3 whitespace-nowrap rounded-[7px] border border-transparent bg-orange px-5.5 py-3.5 text-[14px] font-semibold text-[#3e2118] shadow-[0_2px_0_#d842201c] transition-[background,transform,box-shadow] hover:-translate-y-0.5 hover:bg-[#ed724d] hover:shadow-[0_5px_12px_#ee58202a] active:translate-y-0 motion-reduce:hover:translate-y-0"
             >
-              {authenticated ? "Open Drocsid" : "Find your people"}{" "}
+              {authenticated ? "Open Kalschat" : "Find your people"}{" "}
               <Icon icon={ArrowUpRight01Icon} size={20} />
             </Link>
             <a
-              href="https://github.com/xt42io/drocsid"
+              href="https://github.com/matthewobanla/Kalschat"
               target="_blank"
               rel="noreferrer"
               data-ui="button button-outline"
@@ -304,11 +304,11 @@ function LandingPage() {
               we’re building a little corner of it, together.
             </p>
             <p>
-              Drocsid is an open-source project, made for communities who want a
+              Kalschat is an open-source project, made for communities who want a
               space of their own. No big pitch. Just good company.
             </p>
             <a
-              href="https://github.com/xt42io/drocsid"
+              href="https://github.com/matthewobanla/Kalschat"
               target="_blank"
               rel="noreferrer"
               data-ui="button github-button"
@@ -345,7 +345,7 @@ function LandingPage() {
                 Take your people with you.
               </h2>
               <p className="max-w-115 text-[15px] leading-[1.8] text-[#b8baaf] max-[580px]:text-[14px]">
-                Native Drocsid apps for mobile and desktop are coming soon. The
+                Native Kalschat apps for mobile and desktop are coming soon. The
                 same conversations, with a home on every screen.
               </p>
               <div className="mt-8 grid grid-cols-2 gap-3 max-[440px]:grid-cols-1">
@@ -394,7 +394,7 @@ function LandingPage() {
                   <span className="size-2 rounded-full bg-[#e9c767]" />
                   <span className="size-2 rounded-full bg-[#8bbd91]" />
                   <span className="ml-auto text-[8px] font-semibold text-[#8c8e84] max-[580px]:hidden">
-                    Drocsid for desktop
+                    Kalschat for desktop
                   </span>
                 </div>
                 <div className="grid h-81 grid-cols-[28%_1fr] max-[580px]:h-57">
@@ -504,7 +504,7 @@ function LandingPage() {
             data-ui="button button-dark"
             className="inline-flex min-h-13 items-center justify-center gap-3 whitespace-nowrap rounded-[7px] border border-transparent bg-ink px-5.5 py-3.5 text-[14px] font-semibold text-white transition-[background,transform,box-shadow] hover:-translate-y-0.5 hover:bg-[#42433d] active:translate-y-0 motion-reduce:hover:translate-y-0"
           >
-            {authenticated ? "Open Drocsid" : "Make yourself at home"}{" "}
+            {authenticated ? "Open Kalschat" : "Make yourself at home"}{" "}
             <Icon icon={ArrowRight01Icon} size={19} />
           </Link>
           <span
@@ -536,10 +536,10 @@ function LandingPage() {
             data-ui="copyright"
             className="font-mono text-[9px] text-[#909384] max-[580px]:text-[8px]"
           >
-            © {new Date().getFullYear()} Drocsid
+            © {new Date().getFullYear()} Kalschat
           </span>
           <a
-            href="https://github.com/xt42io/drocsid"
+            href="https://github.com/matthewobanla/Kalschat"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#cc4826] hover:text-[#a83b20]! max-[580px]:text-[11px]"

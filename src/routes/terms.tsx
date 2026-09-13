@@ -4,8 +4,8 @@ import { LegalPage } from "../components/legal-page";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms of Service — Drocsid" },
-      { name: "description", content: "Terms for using the official Drocsid service." },
+      { title: "Terms of Service — Kalschat" },
+      { name: "description", content: "Terms for using the official Kalschat service." },
     ],
   }),
   component: Terms,
@@ -15,20 +15,20 @@ function Terms() {
   return (
     <LegalPage
       title="Terms of Service"
-      description="These terms are the agreement between you and the maintainers of the official Drocsid hosted service."
+      description="These terms are the agreement between you and the maintainers of the official Kalschat hosted service."
     >
       <section>
         <h2>1. Accepting these terms</h2>
         <p>
           By creating an account, accepting an invitation, or using the official
-          Drocsid service, you agree to these Terms, the <Link to="/privacy">Privacy Policy</Link>,
+          Kalschat service, you agree to these Terms, the <Link to="/privacy">Privacy Policy</Link>,
           and the <Link to="/acceptable-use">Acceptable Use Policy</Link>. If you do
           not agree, do not use the service.
         </p>
         <p>
           You must be at least 13 and legally able to enter this agreement. If the
           law where you live requires a higher age or parental permission, you must
-          meet that requirement. If you use Drocsid for an organization, you confirm
+          meet that requirement. If you use Kalschat for an organization, you confirm
           that you may accept these Terms for it.
         </p>
       </section>
@@ -64,11 +64,11 @@ function Terms() {
       </section>
 
       <section>
-        <h2>4. Using Drocsid responsibly</h2>
+        <h2>4. Using Kalschat responsibly</h2>
         <p>
           Follow the <Link to="/acceptable-use">Acceptable Use Policy</Link> and
           respect the <Link to="/community-guidelines">Community Guidelines</Link>.
-          Do not use Drocsid to break the law, harm people, violate rights, interfere
+          Do not use Kalschat to break the law, harm people, violate rights, interfere
           with the service, or evade enforcement. We may investigate reports and
           preserve or disclose information when reasonably required for safety,
           security, or legal compliance.
@@ -78,7 +78,7 @@ function Terms() {
       <section>
         <h2>5. The hosted service and open-source code</h2>
         <p>
-          These Terms govern use of the official hosted service. The Drocsid source
+          These Terms govern use of the official hosted service. The Kalschat source
           code is separately available under the GNU Affero General Public License
           version 3. The license grants rights to copy, modify, and distribute the
           software subject to its conditions; it does not grant access to our hosted
@@ -94,7 +94,7 @@ function Terms() {
       <section>
         <h2>6. Changes, availability, and beta features</h2>
         <p>
-          Drocsid is evolving. We may add, change, limit, or discontinue features;
+          Kalschat is evolving. We may add, change, limit, or discontinue features;
           set reasonable storage or usage limits; or suspend the service for
           maintenance and security. We aim to communicate material changes, but we
           do not promise uninterrupted or error-free availability. Keep your own
@@ -105,11 +105,11 @@ function Terms() {
       <section>
         <h2>7. Enforcement and ending use</h2>
         <p>
-          You may stop using Drocsid at any time and request account deletion. We
+          You may stop using Kalschat at any time and request account deletion. We
           may remove content, restrict features, suspend an account, or terminate
           access when reasonably necessary to enforce these Terms, protect users or
           the service, comply with law, or address a serious risk. When practical,
-          we will give notice and an opportunity to appeal at hello@drocsid.app.
+          we will give notice and an opportunity to appeal at hello@kalschat.app.
         </p>
         <p>
           Sections that by their nature should survive termination—including rights
@@ -132,7 +132,7 @@ function Terms() {
       <section>
         <h2>9. Limitation of liability</h2>
         <p>
-          To the maximum extent permitted by law, Drocsid’s maintainers will not be
+          To the maximum extent permitted by law, Kalschat’s maintainers will not be
           liable for indirect, incidental, special, consequential, exemplary, or
           punitive damages, or for lost profits, data, goodwill, or opportunities,
           arising from the service. Our aggregate liability relating to the hosted

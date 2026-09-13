@@ -19,9 +19,9 @@ test("bare domains become secure external links without linking email addresses"
 });
 
 test("explicit links and sentence punctuation remain intact", () => {
-  assert.deepEqual(externalTextLink("https://drocsid.app/invite/Good123."), {
-    text: "https://drocsid.app/invite/Good123",
-    href: "https://drocsid.app/invite/Good123",
+  assert.deepEqual(externalTextLink("https://kalschat.app/invite/Good123."), {
+    text: "https://kalschat.app/invite/Good123",
+    href: "https://kalschat.app/invite/Good123",
     trailing: ".",
   });
 });

@@ -36,7 +36,7 @@ Use Tailwind v4 utilities directly in components, including responsive and state
 - Byteship profile photos in onboarding and settings, shown throughout chat, mentions, friends, and member lists.
 - Private Byteship message attachments, file picker, drag/drop, clipboard images, progress, retry/cancel, image viewing, and downloads. Sent images keep their local preview until the stored image has loaded; other images show a loading placeholder, with retry on failure.
 
-The browser's former `drocsid-design-preview-v1` data is no longer loaded or synchronized. Unsent drafts live only in the current tab. Existing UI state edits are translated into validated resource commands; the server never accepts arbitrary client state, membership, roles, or authorship.
+The browser's former `kalschat-design-preview-v1` data is no longer loaded or synchronized. Unsent drafts live only in the current tab. Existing UI state edits are translated into validated resource commands; the server never accepts arbitrary client state, membership, roles, or authorship.
 
 ## Realtime and production server
 
@@ -59,9 +59,9 @@ pnpm start
 
 The runner serves built assets, TanStack HTTP routes and WebSocket upgrades together. Set `BETTER_AUTH_URL` to your public HTTPS origin; forward HTTP/1.1 WebSocket upgrades for `/api/ws` through your reverse proxy and use an idle timeout over 60 seconds. Use a persistent Node host; a static host or a request-only serverless deployment will not run this gateway. `PORT` optionally overrides the production port.
 
-Set `INVITE_SHORT_URL=https://drocsid.cc` and attach `drocsid.cc` to the same service as the main app. New invites use a seven-character ASCII alphanumeric code. The production runner redirects those codes, plus previously issued URL-safe legacy codes, to the canonical invite page on `BETTER_AUTH_URL`. Every other `.cc` path returns 404 before assets or application routes are served. Invite creation, preview, acceptance, and revocation are backed by Postgres; accepting a revoked, expired, exhausted, or unknown code is rejected by the server.
+Set `INVITE_SHORT_URL=https://kalschat.cc` and attach `kalschat.cc` to the same service as the main app. New invites use a seven-character ASCII alphanumeric code. The production runner redirects those codes, plus previously issued URL-safe legacy codes, to the canonical invite page on `BETTER_AUTH_URL`. Every other `.cc` path returns 404 before assets or application routes are served. Invite creation, preview, acceptance, and revocation are backed by Postgres; accepting a revoked, expired, exhausted, or unknown code is rejected by the server.
 
-The landing page publishes a 1200×630 Open Graph image from `public/og.png`. Run `pnpm og:generate` after changing the logo or its artwork. Invite pages resolve their community during server rendering and publish a community-specific title, description, canonical URL, and generated PNG preview at `/api/og/invite/:code`; crawlers do not need to run JavaScript. Short `drocsid.cc` links inherit the same preview after redirecting to the canonical invite page.
+The landing page publishes a 1200×630 Open Graph image from `public/og.png`. Run `pnpm og:generate` after changing the logo or its artwork. Invite pages resolve their community during server rendering and publish a community-specific title, description, canonical URL, and generated PNG preview at `/api/og/invite/:code`; crawlers do not need to run JavaScript. Short `kalschat.cc` links inherit the same preview after redirecting to the canonical invite page.
 
 To check the already-running server against the configured database:
 
@@ -76,12 +76,12 @@ This creates two disposable users and a community, verifies real socket delivery
 Better Auth stores its users, sessions, accounts, and verification records in Postgres. Every app endpoint checks the session. WebSocket upgrades check the same Better Auth cookie and exact origin, with session expiry, revocation and periodic validation. Mutations also enforce same-origin requests and validate input.
 
 - `BETTER_AUTH_URL`: public origin, locally `http://localhost:1515`.
-- `INVITE_SHORT_URL`: origin used for short invite links, normally `https://drocsid.cc`.
+- `INVITE_SHORT_URL`: origin used for short invite links, normally `https://kalschat.cc`.
 - `BETTER_AUTH_SECRET`: random secret, at least 32 characters.
 - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`: optional GitHub login. Register the callback at `/api/auth/callback/github`.
 - `DISCORD_CLIENT_ID` / `DISCORD_CLIENT_SECRET`: optional Discord login. Register the callback at `/api/auth/callback/discord`.
 - `SENDBYTE_API_KEY`: server-only Sendbyte key with email sending permission.
-- `SENDBYTE_FROM`: sender on your verified domain, for example `Drocsid <hello@your-domain.com>`.
+- `SENDBYTE_FROM`: sender on your verified domain, for example `Kalschat <hello@your-domain.com>`.
 
 Signup and login start with only an email address, then a six-digit email code. The account and initial profile are created only after verification. Welcome collects a username (with a debounced availability check), profile name, and optional avatar before the optional community selection step. Username uniqueness is enforced when saving, so an availability check does not reserve a name. Existing accounts use the same code flow. Password login, password registration, password changes, and all password reset endpoints are disabled on the backend. Old recovery URLs redirect to sign-in. Existing accounts and chat history are preserved; no password data migration is needed.
 
@@ -175,7 +175,7 @@ TanStack generates `src/routeTree.gen.ts`; do not edit it manually.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request and follow the [Code of Conduct](CODE_OF_CONDUCT.md) in project spaces.
 
-Drocsid is free software licensed under the [GNU Affero General Public License version 3](LICENSE), SPDX identifier `AGPL-3.0-only`. If you run a modified version over a network, section 13 requires offering its corresponding source to users who interact with it remotely.
+Kalschat is free software licensed under the [GNU Affero General Public License version 3](LICENSE), SPDX identifier `AGPL-3.0-only`. If you run a modified version over a network, section 13 requires offering its corresponding source to users who interact with it remotely.
 
 ### Request cancellation compatibility
 

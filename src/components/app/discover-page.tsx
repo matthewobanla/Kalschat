@@ -254,7 +254,7 @@ export function InvitePage({
             data-ui="a-button primary"
             className="inline-flex justify-center items-center gap-2.25 min-h-10 py-2.5 px-4 rounded-md leading-[1.4] [transition:background_0.15s,border-color_0.15s] whitespace-nowrap border! border-solid! border-transparent! font-[550]! text-[12px]! data-[ui~=primary]:bg-(--a-orange) data-[ui~=primary]:text-[#462419] [&[data-ui~=primary]:hover:not(:disabled)]:bg-[#f37954]"
           >
-            Go to Drocsid
+            Go to Kalschat
           </Link>
         </EmptyState>
       </div>

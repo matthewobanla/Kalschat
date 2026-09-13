@@ -83,7 +83,7 @@ export function WelcomePage() {
       await navigate({ to: "/app" });
       setModal({ type: "create-community" });
     } else {
-      notify("Welcome to Drocsid.");
+      notify("Welcome to Kalschat.");
       void navigate({ to: "/app" });
     }
   }

@@ -263,7 +263,7 @@ test("missing Sendbyte config fails before signup persists an account", async ()
 
 test("Sendbyte uses the configured sender, safe templates, and one idempotency key across retries", async () => {
   process.env.SENDBYTE_API_KEY = "sk_test_ignored_in_mock";
-  process.env.SENDBYTE_FROM = "Drocsid <hello@example.test>";
+  process.env.SENDBYTE_FROM = "Kalschat <hello@example.test>";
   const calls: { url: unknown; init: RequestInit | undefined }[] = [];
   const mocked = mock.method(globalThis, "fetch", async (url, init) => {
     calls.push({ url, init });

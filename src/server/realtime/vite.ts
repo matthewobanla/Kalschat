@@ -5,7 +5,7 @@ import { postgresBus } from "./bus.ts";
 
 export function realtimePlugin(): Plugin {
   return {
-    name: "drocsid-websocket",
+    name: "kalschat-websocket",
     configureServer(server) {
       if (!server.httpServer) return;
       const close = attachRealtime(

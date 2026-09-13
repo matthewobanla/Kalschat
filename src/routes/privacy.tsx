@@ -4,10 +4,10 @@ import { LegalPage } from "../components/legal-page";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — Drocsid" },
+      { title: "Privacy Policy — Kalschat" },
       {
         name: "description",
-        content: "How Drocsid collects, uses, stores, and shares personal data.",
+        content: "How Kalschat collects, uses, stores, and shares personal data.",
       },
     ],
   }),
@@ -18,17 +18,17 @@ function PrivacyPolicy() {
   return (
     <LegalPage
       title="Privacy Policy"
-      description="This policy explains what the official Drocsid service collects, why we use it, and the choices you have."
+      description="This policy explains what the official Kalschat service collects, why we use it, and the choices you have."
     >
       <section>
         <h2>1. Scope and who is responsible</h2>
         <p>
-          This policy applies to the official Drocsid website, hosted application,
-          and related services at drocsid.app and drocsid.cc. “Drocsid,” “we,” and
+          This policy applies to the official Kalschat website, hosted application,
+          and related services at kalschat.app and kalschat.cc. “Kalschat,” “we,” and
           “us” mean the maintainers operating those services.
         </p>
         <p>
-          Drocsid is open-source software. Anyone can run a separate instance. A
+          Kalschat is open-source software. Anyone can run a separate instance. A
           third-party or self-hosted instance controls its own data and must provide
           its own privacy information; this policy does not cover it.
         </p>
@@ -69,7 +69,7 @@ function PrivacyPolicy() {
           <li>Provide accounts, authentication, communities, messaging, uploads, search, and realtime delivery.</li>
           <li>Apply your preferences, permissions, blocks, moderation decisions, and privacy choices.</li>
           <li>Secure the service, prevent abuse, enforce rate limits, and investigate faults.</li>
-          <li>Understand reliability and feature usage so we can improve Drocsid.</li>
+          <li>Understand reliability and feature usage so we can improve Kalschat.</li>
           <li>Send requested sign-in codes and necessary service communications.</li>
           <li>Comply with law and protect users, the public, and the service.</li>
         </ul>
@@ -90,7 +90,7 @@ function PrivacyPolicy() {
           messages. Public community names, descriptions, icons, and member counts
           can appear in discovery when an administrator enables discoverability.
         </p>
-        <p>We also use service providers to operate Drocsid:</p>
+        <p>We also use service providers to operate Kalschat:</p>
         <ul>
           <li>PostgreSQL and hosting infrastructure for application data and service delivery.</li>
           <li>Byteship for private file storage and image transformation.</li>
@@ -121,14 +121,14 @@ function PrivacyPolicy() {
           protect service integrity. We may retain limited records when reasonably
           needed for security, dispute resolution, legal compliance, or enforcement.
           To request account access, correction, export, or deletion, contact us at
-          hello@drocsid.app from the email connected to your account.
+          hello@kalschat.app from the email connected to your account.
         </p>
       </section>
 
       <section>
         <h2>6. Cookies and local storage</h2>
         <p>
-          Drocsid uses a session cookie to keep you signed in and browser storage
+          Kalschat uses a session cookie to keep you signed in and browser storage
           for preferences and service operation. Analytics may also store a device
           or session identifier. See our <Link to="/cookies">Cookie Policy</Link> for
           details and controls.
@@ -138,7 +138,7 @@ function PrivacyPolicy() {
       <section>
         <h2>7. International processing and security</h2>
         <p>
-          Drocsid and its providers may process information in countries other than
+          Kalschat and its providers may process information in countries other than
           yours. Where required, we use appropriate safeguards for those transfers.
           We use access checks, private object storage, signed delivery links,
           encrypted network connections, hashed one-time codes, and other technical
@@ -167,7 +167,7 @@ function PrivacyPolicy() {
       <section>
         <h2>9. Children</h2>
         <p>
-          Drocsid is not intended for children under 13. If local law requires a
+          Kalschat is not intended for children under 13. If local law requires a
           higher age to use an online service without parental consent, that higher
           age applies. Contact us if you believe a child provided personal data in
           violation of this section.
@@ -177,7 +177,7 @@ function PrivacyPolicy() {
       <section>
         <h2>10. Changes to this policy</h2>
         <p>
-          We may update this policy as Drocsid changes. We will revise the effective
+          We may update this policy as Kalschat changes. We will revise the effective
           date and provide additional notice when a change materially affects your
           rights or how we use personal data.
         </p>

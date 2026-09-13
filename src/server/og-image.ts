@@ -14,7 +14,7 @@ const dmSansFonts = ["regular", "medium", "bold"].map((weight) =>
 );
 
 if (dmSansFonts.some((font) => !font))
-  throw new Error("Drocsid Open Graph font asset was not found.");
+  throw new Error("Kalschat Open Graph font asset was not found.");
 const dmSansFontFiles = dmSansFonts as string[];
 
 const tones: Record<string, { background: string; foreground: string }> = {
@@ -92,7 +92,7 @@ async function assetDataUri(filename: string) {
           // Try the development or production asset location next.
         }
       }
-      throw new Error(`Drocsid image asset ${filename} was not found.`);
+      throw new Error(`Kalschat image asset ${filename} was not found.`);
     })();
     assetPromises.set(filename, task);
   }
@@ -143,7 +143,7 @@ function document(scene: string, content: string) {
 
 function brand(logo: string) {
   return `<image href="${logo}" x="64" y="48" width="46" height="46"/>
-    <text x="123" y="84" fill="#ffffff" font-family="DM Sans" font-size="34" font-weight="700" letter-spacing="-1.5">drocsid<tspan fill="#ff7654">.</tspan></text>`;
+    <text x="123" y="84" fill="#ffffff" font-family="DM Sans" font-size="34" font-weight="700" letter-spacing="-1.5">kalschat<tspan fill="#ff7654">.</tspan></text>`;
 }
 
 export async function renderSiteOpenGraphImage() {
@@ -218,7 +218,7 @@ export async function renderSiteOpenGraphImage() {
         <rect x="570" y="98" width="570" height="432" rx="25" fill="url(#panel-sheen)" pointer-events="none"/>
       </g>
       <rect x="64" y="500" width="142" height="42" rx="21" fill="#ff7654"/>
-      <text x="135" y="527" text-anchor="middle" fill="#321711" font-family="DM Sans" font-size="15" font-weight="700">drocsid.app</text>
+      <text x="135" y="527" text-anchor="middle" fill="#321711" font-family="DM Sans" font-size="15" font-weight="700">kalschat.app</text>
       <text x="64" y="585" fill="#aeb0ba" font-family="DM Sans" font-size="15">Text-first. Open source. Yours to shape.</text>
     `,
     ),
@@ -264,7 +264,7 @@ export async function renderInviteOpenGraphImage(
       <text x="76" y="232" fill="#adafba" font-family="DM Sans" font-size="22">You’re invited to</text>
       <text fill="#ffffff" font-family="DM Sans" font-size="56" font-weight="700" letter-spacing="-2.8">${textLines(nameLines, 74, 292, 59)}</text>
       <text fill="#c6c7ce" font-family="DM Sans" font-size="20">${textLines(descriptionLines, 78, descriptionY, 29)}</text>
-      <text x="78" y="505" fill="#8e909b" font-family="DM Sans" font-size="15">drocsid.cc/${escapeXml(invite.code)}</text>
+      <text x="78" y="505" fill="#8e909b" font-family="DM Sans" font-size="15">kalschat.cc/${escapeXml(invite.code)}</text>
       <circle cx="962" cy="318" r="175" fill="${tone.background}" opacity=".18" filter="url(#soft-glow)"/>
       <rect x="820" y="165" width="284" height="336" rx="36" fill="${tone.background}" filter="url(#panel-shadow)"/>
       ${icon}
@@ -272,7 +272,7 @@ export async function renderInviteOpenGraphImage(
       <rect x="853" y="432" width="218" height="45" rx="22.5" fill="#ffffff" fill-opacity=".62"/>
       <text x="962" y="460" text-anchor="middle" fill="${tone.foreground}" font-family="DM Sans" font-size="14" font-weight="700">Join the conversation</text>
       <text x="64" y="590" fill="#aeb0ba" font-family="DM Sans" font-size="15">A place for your people.</text>
-      <text x="1136" y="590" text-anchor="end" fill="#ffffff" font-family="DM Sans" font-size="15" font-weight="700">Drocsid</text>
+      <text x="1136" y="590" text-anchor="end" fill="#ffffff" font-family="DM Sans" font-size="15" font-weight="700">Kalschat</text>
     `,
     ),
   );

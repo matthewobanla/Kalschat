@@ -56,7 +56,7 @@ test("composer highlights resolved mentions and distinguishes the viewer", () =>
 test("composer leaves non-mentions unstyled", () => {
   assert.deepEqual(
     composerHighlightParts(
-      "hello@example.com @unknown `@ada` https://drocsid.app/@ada",
+      "hello@example.com @unknown `@ada` https://kalschat.app/@ada",
       targets,
       {
         id: "viewer",
@@ -68,7 +68,7 @@ test("composer leaves non-mentions unstyled", () => {
       { kind: "text", text: "@unknown" },
       { kind: "text", text: " `" },
       { kind: "text", text: "@ada" },
-      { kind: "text", text: "` https://drocsid.app/" },
+      { kind: "text", text: "` https://kalschat.app/" },
       { kind: "text", text: "@ada" },
     ],
   );

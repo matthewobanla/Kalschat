@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage } from "../components/legal-page";
 
 export const Route = createFileRoute("/cookies")({
-  head: () => ({ meta: [{ title: "Cookie Policy — Drocsid" }] }),
+  head: () => ({ meta: [{ title: "Cookie Policy — Kalschat" }] }),
   component: CookiePolicy,
 });
 
@@ -10,14 +10,14 @@ function CookiePolicy() {
   return (
     <LegalPage
       title="Cookie Policy"
-      description="This page explains how the official Drocsid service uses cookies and similar browser storage."
+      description="This page explains how the official Kalschat service uses cookies and similar browser storage."
     >
       <section>
         <h2>1. What these technologies are</h2>
         <p>
           Cookies are small values a website asks your browser to store. Local and
           session storage let a web application keep limited information in your
-          browser. Drocsid uses these technologies to maintain sessions, remember
+          browser. Kalschat uses these technologies to maintain sessions, remember
           choices, understand use, and diagnose problems.
         </p>
       </section>
@@ -26,7 +26,7 @@ function CookiePolicy() {
         <h2>2. Essential storage</h2>
         <p>
           Authentication cookies keep you signed in and protect account access.
-          Drocsid also stores interface choices such as your selected theme and may
+          Kalschat also stores interface choices such as your selected theme and may
           keep temporary connection or workflow state. Blocking essential cookies
           can prevent sign-in and other core features from working.
         </p>
@@ -46,7 +46,7 @@ function CookiePolicy() {
         <h2>4. Your controls</h2>
         <p>
           Most browsers let you inspect, delete, or block cookies and site storage.
-          You can clear Drocsid’s stored data through your browser settings. Doing so
+          You can clear Kalschat’s stored data through your browser settings. Doing so
           may sign you out, reset preferences, or interrupt active uploads and
           conversations. Browser privacy controls may also limit analytics.
         </p>

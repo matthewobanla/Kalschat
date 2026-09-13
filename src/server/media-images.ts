@@ -123,7 +123,7 @@ function cacheStream(storage: Storage, key: string, response: Response) {
 export function mediaCacheHeaders(id: string, variant?: ImageVariant) {
   return {
     "Cache-Control": "private, no-cache",
-    ETag: `W/"drocsid-image-2-${id}-${variant ?? "original"}"`,
+    ETag: `W/"kalschat-image-2-${id}-${variant ?? "original"}"`,
     Vary: "Cookie",
   };
 }

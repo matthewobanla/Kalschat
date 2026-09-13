@@ -32,15 +32,15 @@ const state = {
 test("page titles use live community, channel and person data", () => {
   assert.equal(
     appPageTitle("/app/community/makers/general", {}, state),
-    "(9) #general · The Makers — Drocsid",
+    "(9) #general · The Makers — Kalschat",
   );
   assert.equal(
     appPageTitle("/app/community/makers/settings", {}, state),
-    "(9) Community settings · The Makers — Drocsid",
+    "(9) Community settings · The Makers — Kalschat",
   );
   assert.equal(
     appPageTitle("/app/dm/friend", {}, state),
-    "(9) Jamie Rivera (@jamie) — Drocsid",
+    "(9) Jamie Rivera (@jamie) — Kalschat",
   );
 });
 
@@ -48,11 +48,11 @@ test("page titles reflect search and settings state with bounded unread badges",
   assert.equal(unreadMessageCount(state), 9);
   assert.equal(
     appPageTitle("/app/search", { q: "message history" }, state),
-    "(9) Search · “message history” — Drocsid",
+    "(9) Search · “message history” — Kalschat",
   );
   assert.equal(
     appPageTitle("/app/settings", { section: "privacy" }, state),
-    "(9) Privacy settings — Drocsid",
+    "(9) Privacy settings — Kalschat",
   );
-  assert.equal(formatPageTitle("Inbox", 120), "(99+) Inbox — Drocsid");
+  assert.equal(formatPageTitle("Inbox", 120), "(99+) Inbox — Kalschat");
 });
