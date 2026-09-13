@@ -1,10 +1,11 @@
 packages:
   - '.'
 allowBuilds:
+  '@firebase/util': true
   '@sentry/cli': true
   core-js: true
   esbuild: true
+  protobufjs: true
 
 # patchedDependencies:
 #   '@tanstack/start-server-core@1.169.31': patches/@tanstack__start-server-core@1.169.31.patch
-
