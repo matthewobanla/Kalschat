@@ -7,6 +7,7 @@ import { inviteExists, inviteShortOrigin } from "../src/server/invites";
 
 import { resolve } from "node:path";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { sql } from "drizzle-orm";
 
 if (process.env.DATABASE_URL) {
   try {
@@ -19,6 +20,18 @@ if (process.env.DATABASE_URL) {
     console.error(
       "Auto-migration note:",
       error instanceof Error ? error.message : String(error),
+    );
+  }
+
+  try {
+    await getDb().execute(
+      sql`ALTER TABLE IF EXISTS profiles ALTER COLUMN handle DROP NOT NULL;`,
+    );
+    console.log("Verified profiles.handle is nullable in database.");
+  } catch (err) {
+    console.warn(
+      "Schema fix note:",
+      err instanceof Error ? err.message : String(err),
     );
   }
 }

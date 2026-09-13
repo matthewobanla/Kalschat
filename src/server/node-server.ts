@@ -73,6 +73,8 @@ export function createAppServer(
     const headers = new Headers(response.headers);
     // A navigation must see the current asset manifest after a deployment.
     headers.set("Cache-Control", "no-cache");
+    // Allow OAuth popups (e.g. Firebase Google Sign-In) to communicate and close without COOP errors
+    headers.set("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
     return new Response(response.body, {
       status: response.status,
       statusText: response.statusText,

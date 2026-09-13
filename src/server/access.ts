@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { hydrate, rowJson } from "./sql-json.ts";
 import { and, eq, inArray, or, sql, type SQL } from "drizzle-orm";
 import type { Database } from "./db/index.ts";
@@ -9,10 +10,14 @@ export async function ensureProfile(
   db: Database,
   viewer: { id: string; name: string },
 ) {
+  // Generate a fallback handle matching ^user_[a-z0-9]{19}$
+  // This satisfies NOT NULL constraints on older schemas while triggering username onboarding
+  const fallbackHandle = `user_${randomBytes(10).toString("hex").slice(0, 19)}`;
   await db
     .insert(s.profiles)
     .values({
       userId: viewer.id,
+      handle: fallbackHandle,
       preferences: defaults,
     })
     .onConflictDoNothing({ target: s.profiles.userId });

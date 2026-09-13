@@ -102,107 +102,120 @@ export async function handleFirebaseAuth(request: Request): Promise<Response> {
 
   const db = getDb();
 
-  // Find or create user in DB
-  const [existingUser] = await db
-    .select()
-    .from(schema.user)
-    .where(eq(schema.user.email, email));
+  try {
+    // Find or create user in DB
+    const [existingUser] = await db
+      .select()
+      .from(schema.user)
+      .where(eq(schema.user.email, email));
 
-  let userId: string;
-  let isNewUser = false;
-  const userName = name?.trim() || email.split("@")[0];
+    let userId: string;
+    let isNewUser = false;
+    const userName = name?.trim() || email.split("@")[0];
 
-  if (!existingUser) {
-    userId = randomUUID();
-    isNewUser = true;
-    await db.insert(schema.user).values({
-      id: userId,
-      name: userName,
-      email,
-      emailVerified: true,
-      image: picture || null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-    await ensureProfile(db, { id: userId, name: userName });
-  } else {
-    userId = existingUser.id;
-    if (!existingUser.emailVerified) {
-      await db
-        .update(schema.user)
-        .set({ emailVerified: true, updatedAt: new Date() })
-        .where(eq(schema.user.id, userId));
+    if (!existingUser) {
+      userId = randomUUID();
+      isNewUser = true;
+      await db.insert(schema.user).values({
+        id: userId,
+        name: userName,
+        email,
+        emailVerified: true,
+        image: picture || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      await ensureProfile(db, { id: userId, name: userName });
+    } else {
+      userId = existingUser.id;
+      if (!existingUser.emailVerified) {
+        await db
+          .update(schema.user)
+          .set({ emailVerified: true, updatedAt: new Date() })
+          .where(eq(schema.user.id, userId));
+      }
+      await ensureProfile(db, { id: userId, name: existingUser.name });
     }
-    await ensureProfile(db, { id: userId, name: existingUser.name });
-  }
 
-  // Link account if not already linked
-  const accountId = uid || userId;
-  const [existingAccount] = await db
-    .select()
-    .from(schema.account)
-    .where(eq(schema.account.userId, userId))
-    .limit(1);
+    // Link account if not already linked
+    const accountId = uid || userId;
+    try {
+      const [existingAccount] = await db
+        .select()
+        .from(schema.account)
+        .where(eq(schema.account.userId, userId))
+        .limit(1);
 
-  if (!existingAccount) {
-    await db.insert(schema.account).values({
-      id: randomUUID(),
-      accountId,
-      providerId: "google",
+      if (!existingAccount) {
+        await db.insert(schema.account).values({
+          id: randomUUID(),
+          accountId,
+          providerId: "firebase",
+          userId,
+          idToken,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }
+    } catch (accErr) {
+      console.warn("[Firebase Auth] Non-fatal account linking notice:", accErr);
+    }
+
+    // Create session in DB
+    const sessionId = randomUUID();
+    const sessionToken = randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+    await db.insert(schema.session).values({
+      id: sessionId,
+      token: sessionToken,
       userId,
-      idToken,
+      expiresAt,
       createdAt: new Date(),
       updatedAt: new Date(),
+      ipAddress: request.headers.get("x-forwarded-for") || null,
+      userAgent: request.headers.get("user-agent") || null,
     });
+
+    // Generate HMAC SHA-256 signature compatible with Better-Auth / better-call
+    const secret =
+      process.env.BETTER_AUTH_SECRET && process.env.BETTER_AUTH_SECRET.length >= 32
+        ? process.env.BETTER_AUTH_SECRET
+        : "kalschat_default_secret_key_change_in_production_32chars_min";
+    const signature = createHmac("sha256", secret)
+      .update(sessionToken)
+      .digest("base64");
+    const signedCookieValue = encodeURIComponent(`${sessionToken}.${signature}`);
+
+    const isHttps =
+      (process.env.BETTER_AUTH_URL || "").startsWith("https://") ||
+      request.url.startsWith("https://") ||
+      request.headers.get("x-forwarded-proto") === "https" ||
+      process.env.NODE_ENV === "production";
+
+    const headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    const cookieFlags = "Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000";
+    headers.append(
+      "Set-Cookie",
+      `better-auth.session_token=${signedCookieValue}; ${cookieFlags}${isHttps ? "; Secure" : ""}`,
+    );
+    headers.append(
+      "Set-Cookie",
+      `__Secure-better-auth.session_token=${signedCookieValue}; ${cookieFlags}; Secure`,
+    );
+
+    return new Response(JSON.stringify({ success: true, isNewUser, userId }), {
+      status: 200,
+      headers,
+    });
+  } catch (err) {
+    console.error("[Firebase Auth Endpoint Error]:", err);
+    if (err instanceof HttpError) throw err;
+    throw new HttpError(
+      500,
+      err instanceof Error ? err.message : "Authentication processing error",
+    );
   }
-
-  // Create session in DB
-  const sessionId = randomUUID();
-  const sessionToken = randomBytes(32).toString("hex");
-  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
-
-  await db.insert(schema.session).values({
-    id: sessionId,
-    token: sessionToken,
-    userId,
-    expiresAt,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ipAddress: request.headers.get("x-forwarded-for") || null,
-    userAgent: request.headers.get("user-agent") || null,
-  });
-
-  // Generate HMAC SHA-256 signature compatible with Better-Auth / better-call
-  const secret =
-    process.env.BETTER_AUTH_SECRET && process.env.BETTER_AUTH_SECRET.length >= 32
-      ? process.env.BETTER_AUTH_SECRET
-      : "kalschat_default_secret_key_change_in_production_32chars_min";
-  const signature = createHmac("sha256", secret)
-    .update(sessionToken)
-    .digest("base64");
-  const signedCookieValue = encodeURIComponent(`${sessionToken}.${signature}`);
-
-  const isHttps =
-    (process.env.BETTER_AUTH_URL || "").startsWith("https://") ||
-    request.url.startsWith("https://") ||
-    request.headers.get("x-forwarded-proto") === "https" ||
-    process.env.NODE_ENV === "production";
-
-  const headers = new Headers();
-  headers.set("Content-Type", "application/json");
-
-  const cookieFlags = "Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000";
-  headers.append(
-    "Set-Cookie",
-    `better-auth.session_token=${signedCookieValue}; ${cookieFlags}${isHttps ? "; Secure" : ""}`,
-  );
-  headers.append(
-    "Set-Cookie",
-    `__Secure-better-auth.session_token=${signedCookieValue}; ${cookieFlags}; Secure`,
-  );
-
-  return new Response(JSON.stringify({ success: true, isNewUser, userId }), {
-    status: 200,
-    headers,
-  });
 }
