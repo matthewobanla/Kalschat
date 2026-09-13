@@ -6,103 +6,106 @@ import { ensureProfile } from "./access.ts";
 import { HttpError } from "./http.ts";
 
 export async function handleFirebaseAuth(request: Request): Promise<Response> {
-  let body: {
-    idToken?: string;
-    email?: string;
-    name?: string;
-    photoUrl?: string;
-    uid?: string;
-  };
   try {
-    body = (await request.json()) as typeof body;
-  } catch {
-    throw new HttpError(400, "Invalid JSON.");
-  }
-
-  const idToken = body.idToken?.trim();
-  if (!idToken) {
-    throw new HttpError(400, "Missing ID token.");
-  }
-
-  const apiKey =
-    process.env.VITE_FIREBASE_API_KEY ||
-    process.env.FIREBASE_API_KEY ||
-    "AIzaSyBAW9CM6Z2Obcx6y_tULpmaos51H17d4yY";
-
-  let email: string | undefined;
-  let name: string | undefined = body.name?.trim();
-  let picture: string | undefined = body.photoUrl?.trim();
-  let uid: string | undefined = body.uid?.trim();
-
-  // 1. Verify via Firebase accounts:lookup REST API
-  try {
-    const lookupRes = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken }),
-      },
-    );
-
-    if (lookupRes.ok) {
-      const data = (await lookupRes.json()) as {
-        users?: Array<{
-          localId: string;
-          email?: string;
-          displayName?: string;
-          photoUrl?: string;
-        }>;
-      };
-      const fbUser = data.users?.[0];
-      if (fbUser?.email) {
-        email = fbUser.email.toLowerCase().trim();
-        name = fbUser.displayName || name;
-        picture = fbUser.photoUrl || picture;
-        uid = fbUser.localId || uid;
-      }
-    }
-  } catch {
-    // Fallback to JWT payload verification
-  }
-
-  // 2. Fallback: Parse and validate Firebase JWT payload
-  if (!email) {
+    let body: {
+      idToken?: string;
+      email?: string;
+      name?: string;
+      photoUrl?: string;
+      uid?: string;
+    };
     try {
-      const parts = idToken.split(".");
-      if (parts.length === 3) {
-        const payloadJson = Buffer.from(parts[1], "base64url").toString("utf8");
-        const jwt = JSON.parse(payloadJson) as {
-          email?: string;
-          name?: string;
-          picture?: string;
-          sub?: string;
-          user_id?: string;
-          exp?: number;
+      body = (await request.json()) as typeof body;
+    } catch {
+      return Response.json({ error: "Invalid JSON." }, { status: 400 });
+    }
+
+    const idToken = body.idToken?.trim();
+    if (!idToken) {
+      return Response.json({ error: "Missing ID token." }, { status: 400 });
+    }
+
+    const apiKey =
+      process.env.VITE_FIREBASE_API_KEY ||
+      process.env.FIREBASE_API_KEY ||
+      "AIzaSyBAW9CM6Z2Obcx6y_tULpmaos51H17d4yY";
+
+    let email: string | undefined;
+    let name: string | undefined = body.name?.trim();
+    let picture: string | undefined = body.photoUrl?.trim();
+    let uid: string | undefined = body.uid?.trim();
+
+    // 1. Verify via Firebase accounts:lookup REST API
+    try {
+      const lookupRes = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken }),
+        },
+      );
+
+      if (lookupRes.ok) {
+        const data = (await lookupRes.json()) as {
+          users?: Array<{
+            localId: string;
+            email?: string;
+            displayName?: string;
+            photoUrl?: string;
+          }>;
         };
-        if (jwt.exp && jwt.exp * 1000 > Date.now()) {
-          email = jwt.email?.toLowerCase().trim() || body.email?.toLowerCase().trim();
-          name = jwt.name || name;
-          picture = jwt.picture || picture;
-          uid = jwt.sub || jwt.user_id || uid;
+        const fbUser = data.users?.[0];
+        if (fbUser?.email) {
+          email = fbUser.email.toLowerCase().trim();
+          name = fbUser.displayName || name;
+          picture = fbUser.photoUrl || picture;
+          uid = fbUser.localId || uid;
         }
       }
     } catch {
-      // Ignore
+      // Fallback to JWT payload verification
     }
-  }
 
-  if (!email && body.email) {
-    email = body.email.toLowerCase().trim();
-  }
+    // 2. Fallback: Parse and validate Firebase JWT payload
+    if (!email) {
+      try {
+        const parts = idToken.split(".");
+        if (parts.length === 3) {
+          const payloadJson = Buffer.from(parts[1], "base64url").toString("utf8");
+          const jwt = JSON.parse(payloadJson) as {
+            email?: string;
+            name?: string;
+            picture?: string;
+            sub?: string;
+            user_id?: string;
+            exp?: number;
+          };
+          if (jwt.exp && jwt.exp * 1000 > Date.now()) {
+            email = jwt.email?.toLowerCase().trim() || body.email?.toLowerCase().trim();
+            name = jwt.name || name;
+            picture = jwt.picture || picture;
+            uid = jwt.sub || jwt.user_id || uid;
+          }
+        }
+      } catch {
+        // Ignore
+      }
+    }
 
-  if (!email) {
-    throw new HttpError(401, "Invalid or expired Google authentication token.");
-  }
+    if (!email && body.email) {
+      email = body.email.toLowerCase().trim();
+    }
 
-  const db = getDb();
+    if (!email) {
+      return Response.json(
+        { error: "Invalid or expired Google authentication token." },
+        { status: 401 },
+      );
+    }
 
-  try {
+    const db = getDb();
+
     // Find or create user in DB
     const [existingUser] = await db
       .select()
@@ -212,10 +215,12 @@ export async function handleFirebaseAuth(request: Request): Promise<Response> {
     });
   } catch (err) {
     console.error("[Firebase Auth Endpoint Error]:", err);
-    if (err instanceof HttpError) throw err;
-    throw new HttpError(
-      500,
-      err instanceof Error ? err.message : "Authentication processing error",
+    return Response.json(
+      {
+        error: err instanceof Error ? err.message : "Authentication processing error",
+        detail: err instanceof Error ? err.stack : String(err),
+      },
+      { status: 500 },
     );
   }
 }
