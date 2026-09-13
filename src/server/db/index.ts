@@ -5,12 +5,14 @@ import * as schema from "./schema.ts";
 export type Database = ReturnType<typeof drizzle<typeof schema>>;
 let instance: Database | undefined;
 export function getDatabaseUrl(): string | undefined {
-  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
-  if (process.env.POSTGRES_URL) return process.env.POSTGRES_URL;
-  if (process.env.DATABASE_PRIVATE_URL) return process.env.DATABASE_PRIVATE_URL;
-  if (process.env.DATABASE_PUBLIC_URL) return process.env.DATABASE_PUBLIC_URL;
-  if (process.env.PG_CONNECTION_STRING) return process.env.PG_CONNECTION_STRING;
-  if (process.env.PGHOST) {
+  const check = (val?: string) =>
+    val && val.trim().length > 0 ? val.trim() : undefined;
+  if (check(process.env.DATABASE_URL)) return check(process.env.DATABASE_URL);
+  if (check(process.env.POSTGRES_URL)) return check(process.env.POSTGRES_URL);
+  if (check(process.env.DATABASE_PRIVATE_URL)) return check(process.env.DATABASE_PRIVATE_URL);
+  if (check(process.env.DATABASE_PUBLIC_URL)) return check(process.env.DATABASE_PUBLIC_URL);
+  if (check(process.env.PG_CONNECTION_STRING)) return check(process.env.PG_CONNECTION_STRING);
+  if (check(process.env.PGHOST)) {
     const user = encodeURIComponent(process.env.PGUSER || "postgres");
     const pass = encodeURIComponent(process.env.PGPASSWORD || "");
     const host = process.env.PGHOST;
