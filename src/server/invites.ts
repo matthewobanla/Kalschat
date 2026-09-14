@@ -35,21 +35,33 @@ export function validInviteCode(code: string) {
   return currentCodePattern.test(code) || legacyCodePattern.test(code);
 }
 
+export function getAppOrigin(origin?: string): string {
+  if (origin && origin.trim()) {
+    try {
+      return new URL(origin.trim()).origin;
+    } catch {}
+  }
+  if (process.env.BETTER_AUTH_URL && process.env.BETTER_AUTH_URL.trim()) {
+    try {
+      return new URL(process.env.BETTER_AUTH_URL.trim()).origin;
+    } catch {}
+  }
+  if (process.env.RAILWAY_PUBLIC_DOMAIN && process.env.RAILWAY_PUBLIC_DOMAIN.trim()) {
+    return `https://${process.env.RAILWAY_PUBLIC_DOMAIN.trim()}`;
+  }
+  if (process.env.RAILWAY_STATIC_URL && process.env.RAILWAY_STATIC_URL.trim()) {
+    return `https://${process.env.RAILWAY_STATIC_URL.trim()}`;
+  }
+  return "http://localhost:1515";
+}
+
 export function inviteUrl(code: string, origin?: string): string {
   const shortOrigin = inviteShortOrigin();
-  if (shortOrigin && !shortOrigin.includes("kalschat.cc")) {
+  if (shortOrigin) {
     return `${shortOrigin}/${code}`;
   }
-  const appOrigin =
-    origin ||
-    process.env.BETTER_AUTH_URL ||
-    "https://kalschat.up.railway.app";
-  try {
-    const url = new URL(appOrigin);
-    return `${url.origin}/invite/${code}`;
-  } catch {
-    return `https://kalschat.up.railway.app/invite/${code}`;
-  }
+  const appOrigin = getAppOrigin(origin);
+  return `${appOrigin}/invite/${code}`;
 }
 
 function link(code: string, origin?: string): InviteLink {

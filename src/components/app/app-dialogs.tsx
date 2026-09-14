@@ -730,9 +730,9 @@ function Invite({ communityId }: { communityId: string }) {
     };
   }, [communityId]);
   const displayInviteUrl = invite
-    ? invite.url && !invite.url.includes("kalschat.cc")
-      ? invite.url
-      : `${typeof window !== "undefined" ? window.location.origin : ""}/invite/${invite.code}`
+    ? typeof window !== "undefined" && window.location.origin
+      ? `${window.location.origin}/invite/${invite.code}`
+      : invite.url || `/invite/${invite.code}`
     : "";
 
   async function copy() {

@@ -3,10 +3,12 @@ import { InvitePage } from "../components/app/discover-page";
 import { getInvitePreview } from "../lib/invite-preview";
 
 const siteOrigin =
+  (typeof window !== "undefined" && window.location.origin) ||
   (typeof process !== "undefined" && process.env.BETTER_AUTH_URL) ||
-  (typeof window !== "undefined"
-    ? window.location.origin
-    : "https://kalschat.up.railway.app");
+  (typeof process !== "undefined" && process.env.RAILWAY_PUBLIC_DOMAIN
+    ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+    : "") ||
+  "";
 
 function inviteDescription(name: string, description: string, members: number) {
   const communityDescription = description.replace(/\s+/g, " ").trim();

@@ -264,7 +264,7 @@ export async function renderInviteOpenGraphImage(
       <text x="76" y="232" fill="#adafba" font-family="DM Sans" font-size="22">You’re invited to</text>
       <text fill="#ffffff" font-family="DM Sans" font-size="56" font-weight="700" letter-spacing="-2.8">${textLines(nameLines, 74, 292, 59)}</text>
       <text fill="#c6c7ce" font-family="DM Sans" font-size="20">${textLines(descriptionLines, 78, descriptionY, 29)}</text>
-      <text x="78" y="505" fill="#8e909b" font-family="DM Sans" font-size="15">kalschat.cc/${escapeXml(invite.code)}</text>
+      <text x="78" y="505" fill="#8e909b" font-family="DM Sans" font-size="15">kalschat · /invite/${escapeXml(invite.code)}</text>
       <circle cx="962" cy="318" r="175" fill="${tone.background}" opacity=".18" filter="url(#soft-glow)"/>
       <rect x="820" y="165" width="284" height="336" rx="36" fill="${tone.background}" filter="url(#panel-shadow)"/>
       ${icon}
