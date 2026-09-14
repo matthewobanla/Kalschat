@@ -17,16 +17,49 @@ import { HttpError } from "./http";
 import type { z } from "zod";
 import { uploadSchema } from "../lib/contracts";
 
-let storageClient: { key: string; client: ByteshipClient } | undefined;
-export function getStorage() {
-  if (!process.env.BYTESHIP_API_KEY)
-    throw new HttpError(
-      503,
-      "File uploads are not configured on this server yet.",
-    );
-  const key = process.env.BYTESHIP_API_KEY;
+import { FirebaseStorageClient } from "./firebase-storage";
+
+export type StorageProvider =
+  | ByteshipClient
+  | FirebaseStorageClient
+  | {
+      createFileUpload(
+        path: string,
+        options?: any,
+      ): Promise<{
+        file: { id: string; status?: string };
+        upload: { id: string; url: string; headers: Record<string, string> };
+      }>;
+      completePathUpload(
+        path: string,
+        options?: any,
+      ): Promise<{ ok: boolean }>;
+      getFile(path: string): Promise<{
+        file: {
+          status: string;
+          visibility: string;
+          byteSize?: number;
+          contentType?: string;
+        };
+      }>;
+      createSignedUrl(
+        path: string,
+        options?: any,
+      ): Promise<{ signedUrl: { url: string } }>;
+      deleteFile?(path: string): Promise<{ ok: boolean }>;
+    };
+
+let storageClient: { key: string; client: StorageProvider } | undefined;
+export function getStorage(): StorageProvider {
+  if (process.env.BYTESHIP_API_KEY) {
+    const key = process.env.BYTESHIP_API_KEY;
+    if (storageClient?.key !== key)
+      storageClient = { key, client: new ByteshipClient({ apiKey: key }) };
+    return storageClient.client;
+  }
+  const key = `firebase:${process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET || "kalschat.firebasestorage.app"}`;
   if (storageClient?.key !== key)
-    storageClient = { key, client: new ByteshipClient({ apiKey: key }) };
+    storageClient = { key, client: new FirebaseStorageClient() };
   return storageClient.client;
 }
 export async function discardUpload(db: Database, userId: string, id: string) {

@@ -31,7 +31,12 @@ export function imageVariant(
   return value as ImageVariant;
 }
 
-type Storage = Pick<ByteshipClient, "createSignedUrl">;
+export type Storage = {
+  createSignedUrl(
+    path: string,
+    options?: { expiresInSeconds?: number },
+  ): Promise<{ signedUrl: { url: string } }>;
+};
 const stores = new WeakMap<
   Storage,
   {

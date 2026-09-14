@@ -637,7 +637,7 @@ export function SettingsPage({ section }: { section: string }) {
                 <p>
                   Your account, conversations, and preferences are stored on
                   this server. Message attachments are stored privately with
-                  Byteship.
+                  Firebase Storage.
                 </p>
                 <p>
                   Unsent drafts stay in this tab and are cleared when you leave.

@@ -93,7 +93,7 @@ function PrivacyPolicy() {
         <p>We also use service providers to operate Kalschat:</p>
         <ul>
           <li>PostgreSQL and hosting infrastructure for application data and service delivery.</li>
-          <li>Byteship for private file storage and image transformation.</li>
+          <li>Firebase Storage for private file storage and secure media delivery.</li>
           <li>Sendbyte for delivery of email verification codes.</li>
           <li>PostHog for product analytics and error signals.</li>
           <li>Sentry for error monitoring, traces, and privacy-masked session replay.</li>
