@@ -24,7 +24,7 @@ function randomInviteCode(length = 7) {
 
 export function inviteShortOrigin(): string | undefined {
   const configured = process.env.INVITE_SHORT_URL;
-  if (!configured || !configured.trim()) return undefined;
+  if (!configured || !configured.trim() || configured.includes("kalschat.cc")) return undefined;
   const url = new URL(configured.trim());
   if (url.pathname !== "/" || url.search || url.hash)
     throw new Error("INVITE_SHORT_URL must contain only an origin.");
@@ -35,12 +35,15 @@ export function validInviteCode(code: string) {
   return currentCodePattern.test(code) || legacyCodePattern.test(code);
 }
 
-export function inviteUrl(code: string): string {
+export function inviteUrl(code: string, origin?: string): string {
   const shortOrigin = inviteShortOrigin();
-  if (shortOrigin) {
+  if (shortOrigin && !shortOrigin.includes("kalschat.cc")) {
     return `${shortOrigin}/${code}`;
   }
-  const appOrigin = process.env.BETTER_AUTH_URL || "https://kalschat.up.railway.app";
+  const appOrigin =
+    origin ||
+    process.env.BETTER_AUTH_URL ||
+    "https://kalschat.up.railway.app";
   try {
     const url = new URL(appOrigin);
     return `${url.origin}/invite/${code}`;
@@ -49,8 +52,8 @@ export function inviteUrl(code: string): string {
   }
 }
 
-function link(code: string): InviteLink {
-  return { code, url: inviteUrl(code) };
+function link(code: string, origin?: string): InviteLink {
+  return { code, url: inviteUrl(code, origin) };
 }
 
 function activeInviteWhere(code: string) {
@@ -82,6 +85,7 @@ export async function createInvite(
   db: Database,
   userId: string,
   communityId: string,
+  origin?: string,
 ): Promise<InviteLink> {
   await requireManager(db, userId, communityId);
 
@@ -106,7 +110,7 @@ export async function createInvite(
     .orderBy(desc(s.communityInvites.createdAt))
     .limit(1);
   if (existing && currentCodePattern.test(existing.code))
-    return link(existing.code);
+    return link(existing.code, origin);
 
   for (let attempt = 0; attempt < 4; attempt++) {
     const code = randomInviteCode();
@@ -115,7 +119,7 @@ export async function createInvite(
       .values({ code, communityId, createdBy: userId })
       .onConflictDoNothing()
       .returning({ code: s.communityInvites.code });
-    if (inserted[0]) return link(inserted[0].code);
+    if (inserted[0]) return link(inserted[0].code, origin);
   }
   throw new HttpError(503, "Could not make an invite link. Please try again.");
 }

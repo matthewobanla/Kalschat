@@ -729,10 +729,17 @@ function Invite({ communityId }: { communityId: string }) {
       current = false;
     };
   }, [communityId]);
+  const displayInviteUrl = invite
+    ? invite.url && !invite.url.includes("kalschat.cc")
+      ? invite.url
+      : `${typeof window !== "undefined" ? window.location.origin : ""}/invite/${invite.code}`
+    : "";
+
   async function copy() {
     if (!invite) return;
+    const urlToCopy = displayInviteUrl || invite.url;
     try {
-      await navigator.clipboard.writeText(invite.url);
+      await navigator.clipboard.writeText(urlToCopy);
       setCopied(true);
       notify("Invitation link copied.");
     } catch {
@@ -785,7 +792,7 @@ function Invite({ communityId }: { communityId: string }) {
         <input
           id="invite-link"
           readOnly
-          value={loading ? "Making your invite…" : (invite?.url ?? "")}
+          value={loading ? "Making your invite…" : displayInviteUrl}
           aria-invalid={!!error}
           onFocus={(event) => event.target.select()}
         />

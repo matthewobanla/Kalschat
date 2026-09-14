@@ -21,7 +21,7 @@ const db = database as unknown as Database;
 const communityId = "invite-test-room";
 
 before(async () => {
-  process.env.INVITE_SHORT_URL = "https://kalschat.cc";
+  process.env.INVITE_SHORT_URL = "https://invite.test";
   await migrate(database, { migrationsFolder: "./drizzle" });
   await db.insert(schema.user).values([
     { id: "owner", name: "Owner", email: "owner@invite.test" },
@@ -68,7 +68,7 @@ test("only owners and admins can create stable short invite links", async () => 
   const repeated = await createInvite(db, "owner", communityId);
   assert.equal(first.code, repeated.code);
   assert.match(first.code, /^[A-Za-z0-9]{7}$/);
-  assert.equal(first.url, `https://kalschat.cc/${first.code}`);
+  assert.equal(first.url, `https://invite.test/${first.code}`);
   assert.equal(await inviteExists(db, first.code), true);
   const preview = await invitePreview(db, first.code);
   assert.equal(preview.community.name, "Invite room");

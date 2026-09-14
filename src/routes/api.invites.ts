@@ -23,7 +23,8 @@ export const Route = createFileRoute("/api/invites")({
             .parse(await readJson(request));
           const db = getDb();
           await takeLimit(db, viewer.id, "invite-create", 30);
-          return json(await createInvite(db, viewer.id, input.communityId));
+          const origin = new URL(request.url).origin;
+          return json(await createInvite(db, viewer.id, input.communityId, origin));
         }),
     },
   },
