@@ -2,7 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { InvitePage } from "../components/app/discover-page";
 import { getInvitePreview } from "../lib/invite-preview";
 
-const siteOrigin = "https://kalschat.app";
+const siteOrigin =
+  (typeof process !== "undefined" && process.env.BETTER_AUTH_URL) ||
+  (typeof window !== "undefined"
+    ? window.location.origin
+    : "https://kalschat.up.railway.app");
 
 function inviteDescription(name: string, description: string, members: number) {
   const communityDescription = description.replace(/\s+/g, " ").trim();

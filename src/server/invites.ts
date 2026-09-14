@@ -22,9 +22,10 @@ function randomInviteCode(length = 7) {
   ).join("");
 }
 
-export function inviteShortOrigin() {
-  const configured = process.env.INVITE_SHORT_URL || "https://kalschat.cc";
-  const url = new URL(configured);
+export function inviteShortOrigin(): string | undefined {
+  const configured = process.env.INVITE_SHORT_URL;
+  if (!configured || !configured.trim()) return undefined;
+  const url = new URL(configured.trim());
   if (url.pathname !== "/" || url.search || url.hash)
     throw new Error("INVITE_SHORT_URL must contain only an origin.");
   return url.origin;
@@ -34,8 +35,22 @@ export function validInviteCode(code: string) {
   return currentCodePattern.test(code) || legacyCodePattern.test(code);
 }
 
+export function inviteUrl(code: string): string {
+  const shortOrigin = inviteShortOrigin();
+  if (shortOrigin) {
+    return `${shortOrigin}/${code}`;
+  }
+  const appOrigin = process.env.BETTER_AUTH_URL || "https://kalschat.up.railway.app";
+  try {
+    const url = new URL(appOrigin);
+    return `${url.origin}/invite/${code}`;
+  } catch {
+    return `https://kalschat.up.railway.app/invite/${code}`;
+  }
+}
+
 function link(code: string): InviteLink {
-  return { code, url: `${inviteShortOrigin()}/${code}` };
+  return { code, url: inviteUrl(code) };
 }
 
 function activeInviteWhere(code: string) {

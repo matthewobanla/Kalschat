@@ -65,8 +65,40 @@ export function createAppServer(
   fetch: (request: Request) => Promise<Response>,
   assetDirectory = "dist/client",
   shortInvites?: ShortInviteOptions,
+  resolveInvite?: (code: string) => Promise<boolean>,
 ) {
   const handler = getRequestListener(async (request) => {
+    if (resolveInvite && (request.method === "GET" || request.method === "HEAD")) {
+      try {
+        const url = new URL(request.url);
+        const match = url.pathname.match(
+          /^\/([A-Za-z0-9]{7}|[A-Za-z0-9_-]{10,24})$/,
+        );
+        if (match) {
+          const code = match[1];
+          const reserved = [
+            "app",
+            "api",
+            "sign-in",
+            "sign-up",
+            "terms",
+            "cookies",
+            "privacy",
+            "invite",
+            "acceptable-use",
+            "community-guidelines",
+          ];
+          if (!reserved.includes(code) && (await resolveInvite(code))) {
+            return Response.redirect(
+              new URL(`/invite/${encodeURIComponent(code)}`, url.origin).toString(),
+              302,
+            );
+          }
+        }
+      } catch {
+        // Continue with normal request pipeline
+      }
+    }
     const response = await fetch(request);
     if (!response.headers.get("content-type")?.includes("text/html"))
       return response;

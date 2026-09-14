@@ -42,16 +42,23 @@ const canonicalOrigin = new URL(
   process.env.BETTER_AUTH_URL || "http://localhost:1515",
 ).origin;
 const shortOrigin = inviteShortOrigin();
-if (new URL(shortOrigin).host === new URL(canonicalOrigin).host)
-  throw new Error("INVITE_SHORT_URL must use a different host from BETTER_AUTH_URL.");
+const validShortOrigin =
+  shortOrigin &&
+  new URL(shortOrigin).host !== new URL(canonicalOrigin).host
+    ? shortOrigin
+    : undefined;
+
 const server = createAppServer(
   (request) => app.fetch(request),
   "dist/client",
-  {
-    origin: shortOrigin,
-    canonicalOrigin,
-    resolve: (code) => inviteExists(getDb(), code),
-  },
+  validShortOrigin
+    ? {
+        origin: validShortOrigin,
+        canonicalOrigin,
+        resolve: (code) => inviteExists(getDb(), code),
+      }
+    : undefined,
+  (code) => inviteExists(getDb(), code),
 );
 const close = attachRealtime(
   server,
